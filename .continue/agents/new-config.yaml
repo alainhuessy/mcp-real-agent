@@ -1,0 +1,48 @@
+# Agent OS v2.1 — Continue Configuration
+# Konfiguration für lokale KI-Modelle via Ollama und Agent OS MCP-Server
+
+name: Agent OS v2.1
+version: 2.1.0
+schema: v1
+
+# Modelle - optimiert für Agent OS v2.1
+# https://docs.continue.dev/customization/models
+models:
+  - name: planner-reasoning
+    title: "Phi4 Reasoning (Planung & Strategie)"
+    provider: ollama
+    model: phi4-reasoning:latest
+    apiBase: "http://localhost:11434"
+    contextLength: 24000
+    
+  - name: coder
+    title: "Qwen 2.5 Coder (Code Generierung)"
+    provider: ollama
+    model: qwen2.5-coder:14b
+    apiBase: "http://localhost:11434"
+    contextLength: 28000
+    
+  - name: rag-generalist
+    title: "GPT-OSS (Chat & Knowledge)"
+    provider: ollama
+    model: gpt-oss:latest
+    apiBase: "http://localhost:11434"
+    contextLength: 32000
+
+# Tab Autocomplete Model (schnell für Inline-Vorschläge)
+tabAutocompleteModel:
+  name: coder
+  title: "Qwen Coder (Autocomplete)"
+  provider: ollama
+  model: qwen2.5-coder:14b
+  apiBase: "http://localhost:11434"
+  contextLength: 2048
+
+# MCP Servers - Integration mit Agent OS
+# https://docs.continue.dev/customization/mcp-tools
+mcpServers:
+  - name: agent-os
+    command: ".venv/bin/python"
+    args: 
+      - "mcp_server.py"
+    cwd: "/mnt/6724D393605CE580/Linux/LLM_Projekte/Github/mcp-real-agent"

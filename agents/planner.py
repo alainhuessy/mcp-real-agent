@@ -3,10 +3,17 @@
 from core.llm import LLM
 
 
-PLANNER_SYSTEM = """You are a planner agent in an AI Operating System.
+PLANNER_SYSTEM = """You are a planner agent in an AI Operating System for Python development.
 Your job is to break down a user goal into clear, actionable subtasks.
-Return a numbered list of tasks. Each task should be specific and executable.
-Do NOT explain — just return the task list."""
+Return a numbered list of tasks. Each task should be specific, measurable, and executable.
+
+When you have PROJECT CONTEXT provided:
+- Use it to create PROJECT-SPECIFIC tasks, not generic ones
+- Reference actual files, modules, and tools mentioned in the context
+- Suggest realistic next steps based on current project status
+
+Do NOT create generic templates - use the provided context!
+Return ONLY the numbered list, no explanations."""
 
 
 class PlannerAgent:
@@ -17,9 +24,22 @@ class PlannerAgent:
 
     def plan(self, goal: str, context: list[str] | None = None) -> list[str]:
         """Zerlegt ein Ziel in eine Liste von Subtasks."""
-        ctx = "\n".join(context) if context else "No prior context."
+        ctx = "\n\n".join(context) if context else "No project context available."
 
-        prompt = f"""GOAL:\n{goal}\n\nCONTEXT:\n{ctx}\n\nCreate a numbered task list."""
+        # ── Enhanced Prompt with Project Knowledge ──
+        prompt = f"""PROJECT CONTEXT:
+{ctx}
+
+---
+
+GOAL TO BREAK DOWN:
+{goal}
+
+---
+
+Create a numbered task list that is SPECIFIC to this project.
+If project context is available, use it to guide your planning.
+Return only the numbered list."""
 
         model = self.llm.get_model("planner")
         result = self.llm.ask(model, prompt, system=PLANNER_SYSTEM)

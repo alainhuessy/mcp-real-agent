@@ -29,6 +29,7 @@ from tools.registry import ToolRegistry
 from tools.shell import shell
 from tools.file import read_file, write_file, list_dir
 from tools.git import git_status, git_commit, git_log
+from tools.workspace import get_project_context, get_project_summary
 from agents.planner import PlannerAgent
 from agents.worker import WorkerAgent
 from agents.reviewer import ReviewerAgent
@@ -330,11 +331,19 @@ def _execute_tool(name: str, args: dict[str, Any]) -> str:
 
     if name == "agent_plan":
         goal = args["goal"]
-        ctx = memory.search(goal)
-        subtasks = planner.plan(goal, ctx)
+        
+        # ── ENHANCED: Workspace Context ──
+        workspace_context = get_project_context()
+        memory_context = memory.search(goal, n_results=5)
+        
+        # Combine contexts for better planning
+        enhanced_context = [workspace_context] + memory_context
+        
+        subtasks = planner.plan(goal, enhanced_context)
         for st in subtasks:
             tasks.add(st)
-        return "📋 Subtasks:\n" + "\n".join(f"  {i}. {s}" for i, s in enumerate(subtasks, 1))
+        
+        return "📋 Subtasks (Workspace-Aware):\n" + "\n".join(f"  {i}. {s}" for i, s in enumerate(subtasks, 1))
 
     # ── Memory ──
     if name == "memory_search":

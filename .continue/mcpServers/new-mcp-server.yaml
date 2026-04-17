@@ -1,0 +1,10 @@
+{
+  "mcpServers": [
+    {
+      "name": "agent-os",
+      "command": ".venv/bin/python",
+      "args": ["mcp_server.py"],
+      "cwd": "/mnt/6724D393605CE580/Linux/LLM_Projekte/Github/mcp-real-agent"
+    }
+  ]
+}
