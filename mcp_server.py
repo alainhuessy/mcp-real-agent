@@ -1,0 +1,430 @@
+"""Agent OS v2.1 — MCP Server (Model Context Protocol).
+
+Dieser Server stellt das gesamte Agent OS als MCP-kompatiblen Server bereit.
+Continue (VS Code) kann darauf zugreifen und alle Tools, Memory und LLM nutzen.
+
+Start: python mcp_server.py
+Transport: stdio (Standard für MCP)
+"""
+
+import asyncio
+import json
+import sys
+import logging
+from typing import Any
+
+from mcp.server import Server
+from mcp.server.stdio import stdio_server
+from mcp.types import (
+    Tool,
+    TextContent,
+    CallToolResult,
+)
+
+from core.llm import LLM, MODELS
+from core.router import Router
+from memory.memory import Memory
+from tasks.task_queue import TaskQueue
+from tools.registry import ToolRegistry
+from tools.shell import shell
+from tools.file import read_file, write_file, list_dir
+from tools.git import git_status, git_commit, git_log
+from agents.planner import PlannerAgent
+from agents.worker import WorkerAgent
+from agents.reviewer import ReviewerAgent
+
+# Logging nur nach stderr (stdout = MCP stdio Transport)
+logging.basicConfig(level=logging.INFO, stream=sys.stderr)
+logger = logging.getLogger("agent-os-mcp")
+
+# ── Agent OS Instanz ──────────────────────────────────────────────
+
+llm = LLM()
+router = Router()
+memory = Memory()
+tasks = TaskQueue()
+tools = ToolRegistry()
+
+# Tools registrieren (ohne Rich-Output, da stdio)
+tools.tools["shell"] = {"func": shell, "description": "Execute shell commands (allowlisted)"}
+tools.tools["read_file"] = {"func": read_file, "description": "Read file contents"}
+tools.tools["write_file"] = {"func": lambda args: write_file(args.get("path", ""), args.get("content", "")) if isinstance(args, dict) else write_file(args), "description": "Write content to file"}
+tools.tools["list_dir"] = {"func": list_dir, "description": "List directory contents"}
+tools.tools["git_status"] = {"func": lambda _: git_status(), "description": "Show git status"}
+tools.tools["git_commit"] = {"func": git_commit, "description": "Create git commit"}
+tools.tools["git_log"] = {"func": lambda _: git_log(), "description": "Show recent git commits"}
+
+planner = PlannerAgent(llm)
+worker = WorkerAgent(llm, router, tools)
+reviewer = ReviewerAgent(llm)
+
+# ── MCP Server ────────────────────────────────────────────────────
+
+server = Server("agent-os-v2")
+
+
+@server.list_tools()
+async def list_tools() -> list[Tool]:
+    """Gibt alle verfügbaren MCP Tools zurück."""
+    return [
+        # ── Agent Pipeline Tools ──
+        Tool(
+            name="agent_run_task",
+            description=(
+                "Execute a task through the full Agent OS pipeline: "
+                "Router → Worker (LLM) → Reviewer → Memory. "
+                "Automatically selects the best model (coder/rag/planner/chat)."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "task": {
+                        "type": "string",
+                        "description": "The task to execute (e.g. 'write a Python function for sorting')",
+                    }
+                },
+                "required": ["task"],
+            },
+        ),
+        Tool(
+            name="agent_plan",
+            description=(
+                "Break down a goal into subtasks using the Planner Agent. "
+                "Returns a numbered list of actionable steps."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "goal": {
+                        "type": "string",
+                        "description": "The goal to break down (e.g. 'build a REST API for user management')",
+                    }
+                },
+                "required": ["goal"],
+            },
+        ),
+        # ── Memory Tools ──
+        Tool(
+            name="memory_search",
+            description=(
+                "Search the Agent OS memory (ChromaDB) for relevant context. "
+                "Searches across facts, tasks, and episodes."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "Search query (semantic search)",
+                    },
+                    "n_results": {
+                        "type": "integer",
+                        "description": "Number of results (default: 3)",
+                        "default": 3,
+                    },
+                },
+                "required": ["query"],
+            },
+        ),
+        Tool(
+            name="memory_store",
+            description="Store a fact or decision in the Agent OS long-term memory.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "description": "The fact or decision to store",
+                    },
+                    "id": {
+                        "type": "string",
+                        "description": "Unique ID for this memory entry",
+                    },
+                },
+                "required": ["text", "id"],
+            },
+        ),
+        # ── Task Queue Tools ──
+        Tool(
+            name="task_add",
+            description="Add a task to the Agent OS task queue.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "task": {"type": "string", "description": "Task description"},
+                    "priority": {
+                        "type": "integer",
+                        "description": "Priority (1=low, 10=high, default: 1)",
+                        "default": 1,
+                    },
+                },
+                "required": ["task"],
+            },
+        ),
+        Tool(
+            name="task_list",
+            description="List all tasks in the Agent OS task queue with their status.",
+            inputSchema={"type": "object", "properties": {}},
+        ),
+        Tool(
+            name="task_next",
+            description="Get and execute the next pending task from the queue.",
+            inputSchema={"type": "object", "properties": {}},
+        ),
+        # ── File Tools ──
+        Tool(
+            name="file_read",
+            description="Read the contents of a file.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "File path to read"},
+                },
+                "required": ["path"],
+            },
+        ),
+        Tool(
+            name="file_write",
+            description="Write content to a file (creates directories automatically).",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "File path to write"},
+                    "content": {"type": "string", "description": "Content to write"},
+                },
+                "required": ["path", "content"],
+            },
+        ),
+        Tool(
+            name="file_list",
+            description="List contents of a directory.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "Directory path (default: current dir)",
+                        "default": ".",
+                    },
+                },
+            },
+        ),
+        # ── Shell Tool ──
+        Tool(
+            name="shell_run",
+            description=(
+                "Execute a shell command (allowlisted commands only: "
+                "ls, dir, mkdir, pwd, echo, cat, type, whoami, date, python, pip, git)."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "command": {"type": "string", "description": "Shell command to run"},
+                },
+                "required": ["command"],
+            },
+        ),
+        # ── Git Tools ──
+        Tool(
+            name="git_status",
+            description="Show current git status (changed/staged files).",
+            inputSchema={"type": "object", "properties": {}},
+        ),
+        Tool(
+            name="git_commit",
+            description="Create a git commit with the given message (auto-adds all changes).",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "message": {"type": "string", "description": "Commit message"},
+                },
+                "required": ["message"],
+            },
+        ),
+        Tool(
+            name="git_log",
+            description="Show recent git commits.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "count": {
+                        "type": "integer",
+                        "description": "Number of commits to show (default: 5)",
+                        "default": 5,
+                    },
+                },
+            },
+        ),
+        # ── LLM Direct ──
+        Tool(
+            name="llm_ask",
+            description=(
+                "Send a prompt directly to a local Ollama model. "
+                "Available models: qwen2.5-coder:14b (code), llama3.1:8b (chat/planning)."
+            ),
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "prompt": {"type": "string", "description": "The prompt to send"},
+                    "model": {
+                        "type": "string",
+                        "description": "Model name (default: auto-routed based on content)",
+                    },
+                    "system": {
+                        "type": "string",
+                        "description": "Optional system prompt",
+                        "default": "",
+                    },
+                },
+                "required": ["prompt"],
+            },
+        ),
+        # ── System ──
+        Tool(
+            name="agent_status",
+            description="Get the current Agent OS system status (pending tasks, tools, models).",
+            inputSchema={"type": "object", "properties": {}},
+        ),
+    ]
+
+
+@server.call_tool()
+async def call_tool(name: str, arguments: dict[str, Any]) -> CallToolResult:
+    """Führt ein MCP Tool aus."""
+    logger.info(f"Tool call: {name} with {arguments}")
+
+    try:
+        result = _execute_tool(name, arguments)
+        return CallToolResult(content=[TextContent(type="text", text=str(result))])
+    except Exception as e:
+        logger.error(f"Tool error: {name} → {e}")
+        return CallToolResult(
+            content=[TextContent(type="text", text=f"❌ Error: {e}")],
+            isError=True,
+        )
+
+
+def _execute_tool(name: str, args: dict[str, Any]) -> str:
+    """Synchrone Tool-Ausführung."""
+
+    # ── Agent Pipeline ──
+    if name == "agent_run_task":
+        task_text = args["task"]
+        mem_ctx = memory.search(task_text)
+        mode = router.route(task_text)
+
+        if mode == "planner":
+            subtasks = planner.plan(task_text, mem_ctx)
+            for st in subtasks:
+                tasks.add(st)
+            return f"📋 Plan erstellt ({len(subtasks)} Subtasks):\n" + "\n".join(
+                f"  {i}. {s}" for i, s in enumerate(subtasks, 1)
+            )
+
+        result = worker.execute(task_text, mem_ctx)
+        review = reviewer.review(task_text, result)
+        memory.sync(f"Task: {task_text}\nResult: {result[:300]}", task_text[:30])
+
+        status = "✅ APPROVED" if review["approved"] else "⚠️ NEEDS_FIX"
+        return f"[Mode: {mode}] [Review: {status}]\n\n{result}"
+
+    if name == "agent_plan":
+        goal = args["goal"]
+        ctx = memory.search(goal)
+        subtasks = planner.plan(goal, ctx)
+        for st in subtasks:
+            tasks.add(st)
+        return "📋 Subtasks:\n" + "\n".join(f"  {i}. {s}" for i, s in enumerate(subtasks, 1))
+
+    # ── Memory ──
+    if name == "memory_search":
+        results = memory.search(args["query"], args.get("n_results", 3))
+        if not results:
+            return "Keine Ergebnisse gefunden."
+        return "\n---\n".join(results)
+
+    if name == "memory_store":
+        memory.add_fact(args["text"], args["id"])
+        return f"✅ Gespeichert: {args['id']}"
+
+    # ── Tasks ──
+    if name == "task_add":
+        t = tasks.add(args["task"], args.get("priority", 1))
+        return f"✅ Task hinzugefügt: {t['id']} — {t['task']}"
+
+    if name == "task_list":
+        all_tasks = tasks.get_all()
+        if not all_tasks:
+            return "Keine Tasks in der Queue."
+        lines = []
+        for t in all_tasks:
+            lines.append(f"[{t['status']}] {t['id']} — {t['task']}")
+        return "\n".join(lines)
+
+    if name == "task_next":
+        t = tasks.get_next()
+        if not t:
+            return "Keine pending Tasks."
+        t["status"] = "running"
+        result = worker.execute(t["task"], memory.search(t["task"]))
+        tasks.complete(t)
+        memory.sync(f"Task: {t['task']}\nResult: {result[:300]}", t["task"][:30])
+        return f"✅ Task erledigt: {t['task']}\n\n{result}"
+
+    # ── File ──
+    if name == "file_read":
+        return read_file(args["path"])
+
+    if name == "file_write":
+        return write_file(args["path"], args["content"])
+
+    if name == "file_list":
+        return list_dir(args.get("path", "."))
+
+    # ── Shell ──
+    if name == "shell_run":
+        return shell(args["command"])
+
+    # ── Git ──
+    if name == "git_status":
+        return git_status()
+
+    if name == "git_commit":
+        return git_commit(args["message"])
+
+    if name == "git_log":
+        return git_log(args.get("count", 5))
+
+    # ── LLM Direct ──
+    if name == "llm_ask":
+        prompt = args["prompt"]
+        model_name = args.get("model")
+        if not model_name:
+            mode = router.route(prompt)
+            model_name = llm.get_model(mode)
+        system = args.get("system", "")
+        return llm.ask(model_name, prompt, system)
+
+    # ── System ──
+    if name == "agent_status":
+        return json.dumps({
+            "status": "running",
+            "pending_tasks": tasks.get_pending_count(),
+            "total_tasks": len(tasks.get_all()),
+            "tools": list(tools.tools.keys()),
+            "models": MODELS,
+        }, indent=2)
+
+    return f"❌ Unbekanntes Tool: {name}"
+
+
+# ── Main ──────────────────────────────────────────────────────────
+
+async def main():
+    logger.info("🧠 Agent OS v2.1 MCP Server starting...")
+    async with stdio_server() as (read_stream, write_stream):
+        await server.run(read_stream, write_stream, server.create_initialization_options())
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

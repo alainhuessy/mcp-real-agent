@@ -1,0 +1,10 @@
+{
+  "mcpServers": [
+    {
+      "name": "agent-os",
+      "command": "python",
+      "args": ["mcp_server.py"],
+      "cwd": "."
+    }
+  ]
+}
