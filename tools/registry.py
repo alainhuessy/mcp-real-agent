@@ -10,6 +10,7 @@ class ToolRegistry:
     """Registriert und verwaltet Tools als Plugins."""
 
     def __init__(self):
+        """Initialize empty tool registry for plugin management."""
         self.tools: dict[str, Callable] = {}
 
     def register(self, name: str, func: Callable, description: str = "") -> None:

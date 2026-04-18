@@ -1,0 +1,17 @@
+{
+  "metadata": {
+    "task_id": "9451ae77",
+    "timestamp": "2026-04-18_13-14-52",
+    "task_name": "Schreibe zwei Python Fibonacci Funktionen - eine rekursiv und eine iterativ mit ausführlichen deutschen Docstrings"
+  },
+  "execution": {
+    "mode": "rag",
+    "duration_seconds": 8.71,
+    "status": "success"
+  },
+  "llm": {
+    "response_preview": "Hier sind die beiden Python-Funktionen für die Berechnung der Fibonacci-Zahlen:\n\n### Rekursive Funktion\n```python\ndef fib_rekursiv(n):\n    \"\"\"\n    Berechnet die n-te Fibonacci-Zahl rekursiv.\n\n    Die Fibonacci-Zahlen bilden eine Folge, bei der jeder Term (nach dem ersten zwei) \n    aus den beiden vorherigen Termen (n-1 und n-2) gebildet wird. \n\n    :param n: Die Nummer der Fibonacci-Zahl, die berechnet werden soll.\n    :return: Die n-te Fibonacci-Zahl.\n    \"\"\"\n    if n <= 0:\n        raise ValueE",
+    "response_full": "Hier sind die beiden Python-Funktionen für die Berechnung der Fibonacci-Zahlen:\n\n### Rekursive Funktion\n```python\ndef fib_rekursiv(n):\n    \"\"\"\n    Berechnet die n-te Fibonacci-Zahl rekursiv.\n\n    Die Fibonacci-Zahlen bilden eine Folge, bei der jeder Term (nach dem ersten zwei) \n    aus den beiden vorherigen Termen (n-1 und n-2) gebildet wird. \n\n    :param n: Die Nummer der Fibonacci-Zahl, die berechnet werden soll.\n    :return: Die n-te Fibonacci-Zahl.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"Fibonacci-Zahlen beginnen bei n=1\")\n    elif n == 1:\n        return 1\n    elif n == 2:\n        return 1\n    else:\n        return fib_rekursiv(n-1) + fib_rekursiv(n-2)\n```\n\n### Iterative Funktion\n```python\ndef fib_iterativ(n):\n    \"\"\"\n    Berechnet die n-te Fibonacci-Zahl iterativ.\n\n    :param n: Die Nummer der Fibonacci-Zahl, die berechnet werden soll.\n    :return: Die n-te Fibonacci-Zahl.\n    \"\"\"\n    if n <= 0:\n        raise ValueError(\"Fibonacci-Zahlen beginnen bei n=1\")\n    \n    a = 1\n    b = 1\n    \n    for _ in range(2, n):\n        a, b = b, a + b\n    \n    return b\n```\n\nBeide Funktionen berechnen die n-te Fibonacci-Zahl. Die rekursive Funktion `fib_rekursiv(n)` verwendet die Eigenschaft der Fibonacci-Folge aus, dass jeder Term aus den beiden vorherigen gebildet wird, wodurch sie sich selbst wiederholt und immer komplexer wird, wenn sie weiterhin rekursiv aufgerufen wird.\n\nDie iterative Funktion `fib_iterativ(n)`, hingegen verwendet eine einfache Schleife, um die n-te Fibonacci-Zahl zu berechnen. Sie speichert nur zwei Werte (`a` und `b`) in den letzten beiden Iterationsschritten und fügt sie auf, wodurch die Berechnung der n-ten Zahl effizienter wird.\n\nBeispiel:\n```python\nprint(fib_rekursiv(10))  # 34\nprint(fib_iterativ(10))  # 34\n```\n\nIch hoffe, diese Funktionen sind hilfreich!",
+    "response_length": 1809
+  }
+}

@@ -1,5 +1,6 @@
 """ChromaDB Memory Layer — Shared Memory für das Agent OS."""
 
+import os
 from datetime import datetime
 import chromadb
 from rich.console import Console
@@ -8,10 +9,20 @@ console = Console()
 
 
 class Memory:
-    """Vector Memory mit ChromaDB — speichert Facts, Tasks, Episodes."""
+    """Vector Memory mit ChromaDB — speichert Facts, Tasks, Episodes mit Persistenz."""
 
     def __init__(self, persist_dir: str = "./chroma_data"):
-        self.client = chromadb.Client()
+        """Initialisiert ChromaDB mit Persistenz-Support.
+        
+        Args:
+            persist_dir: Pfad für persistenten Datenspeicher (default: ./chroma_data)
+        """
+        # Erstelle Persistenz-Verzeichnis falls nicht vorhanden
+        os.makedirs(persist_dir, exist_ok=True)
+        
+        # ── Wichtig: PersistentClient für Datenspeicherung ──
+        # (Nicht chromadb.Client() das nur Im-Memory ist!)
+        self.client = chromadb.PersistentClient(path=persist_dir)
         self.facts = self.client.get_or_create_collection("facts")
         self.tasks_mem = self.client.get_or_create_collection("tasks")
         self.episodes = self.client.get_or_create_collection("episodes")

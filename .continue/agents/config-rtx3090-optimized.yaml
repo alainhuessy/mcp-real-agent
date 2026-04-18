@@ -1,0 +1,235 @@
+# Agent OS v2.1 — RTX 3090 OPTIMIZED Configuration
+# 🎯 Zero CPU-Offload | Maximum GPU Efficiency | Best Performance
+# 
+# SYSTEM: RTX 3090 (24GB VRAM) + Agent OS v2.1
+# GOAL: Perfect balance between speed, quality, and stability
+# 
+# Environment Setup (SET BEFORE RUNNING):
+# export OLLAMA_GPU_MEMORY=24576    # Full 24GB GPU
+# export OLLAMA_NUM_GPU=1           # RTX 3090 only
+# export OLLAMA_NUM_THREAD=1        # No CPU-Offload!
+
+name: Agent OS v2.1 — RTX 3090 OPTIMIZED  
+version: 3.0.0
+schema: v1
+
+# ============================================================================
+# 🚀 MODEL SELECTION (RTX 3090 OPTIMIZED - NO CPU-OFFLOAD)
+# ============================================================================
+
+models:
+  
+  # ════════════════════════════════════════════════════════════════════════════
+  # 🟢 TIER 1: PRIMARY (Daily Work - Balanced)
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  # ⭐ PRIMARY AGENT MODEL (RTX 3090 Optimized)
+  # - Use for: Agent workflows, MCP tasks, coding, planning
+  # - Speed: ⚡⚡⚡ (3-7 Sekunden)
+  # - Quality: ⭐⭐⭐⭐⭐ (State-of-Art)
+  # - Memory: 15GB GPU (100% - NO CPU-OFFLOAD!)
+  # - Why this: Specifically optimized for RTX 3090, perfect fit
+  - name: agent
+    title: "🟢 Devstral RTX3090 (PRIMARY) ⭐⭐⭐⭐⭐"
+    provider: ollama
+    model: devstral-rtx3090:latest
+    apiBase: "http://localhost:11434"
+    contextLength: 32000
+    
+  # SECONDARY: Quick Code Generation
+  # - Use for: Quick drafts, rapid iteration, fallback
+  # - Speed: ⚡⚡⚡⚡ (2-5 Sekunden)
+  # - Quality: ⭐⭐⭐⭐ (Very good)
+  # - Memory: 9GB GPU (perfect for parallel inference)
+  # - Why this: Fastest code model, still excellent quality
+  - name: coder
+    title: "⚡ Qwen 2.5 Coder 14B (Quick Code)"
+    provider: ollama
+    model: qwen2.5-coder:14b
+    apiBase: "http://localhost:11434"
+    contextLength: 28000
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 💪 TIER 2: POWER (Complex Tasks - Maximum Quality)
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  # POWER AGENT: Largest safe model for RTX 3090
+  # - Use for: Complex multi-file editing, advanced reasoning, planning
+  # - Speed: ⚡⚡ (5-10 Sekunden)
+  # - Quality: ⭐⭐⭐⭐⭐ (Highest)
+  # - Memory: 15GB GPU (fits with safety margin!)
+  # - Why this: Best balance of size, quality, and RTX 3090 compatibility
+  - name: qwen-power
+    title: "💪 Devstral Small-2 24B (Power Tasks)"
+    provider: ollama
+    model: devstral-small-2:24b
+    apiBase: "http://localhost:11434"
+    contextLength: 32000
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # ⚡ TIER 3: SPEED (Autocomplete & Quick Tasks)
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  # ULTRA-FAST CODE
+  # - Use for: Tab-autocomplete, quick suggestions, drafts
+  # - Speed: ⚡⚡⚡⚡⚡ (1-2 Sekunden)
+  # - Quality: ⭐⭐⭐ (Good enough for suggestions)
+  # - Memory: 7.1GB GPU (very light)
+  - name: coder-fast
+    title: "⚡⚡ Mistral Nemo 12B (Ultra-Fast)"
+    provider: ollama
+    model: mistral-nemo:latest
+    apiBase: "http://localhost:11434"
+    contextLength: 12000
+    
+  # MINIMAL: Tab completion only
+  # - Use for: Autocomplete, minimal tasks
+  # - Speed: ⚡⚡⚡⚡⚡ (0.5-1 Sekunde)
+  # - Quality: ⭐⭐ (Basic)
+  # - Memory: 2.5GB GPU (almost nothing)
+  - name: phi-mini
+    title: "📱 Phi4-Mini 3.8B (Lightweight)"
+    provider: ollama
+    model: phi4-mini:latest
+    apiBase: "http://localhost:11434"
+    contextLength: 8000
+
+# ============================================================================
+# 📊 TAB AUTOCOMPLETE (Runs during typing)
+# ============================================================================
+tabAutocompleteModel:
+  name: phi-mini
+  title: "Phi4-Mini (Tab-Complete)"
+  provider: ollama
+  model: phi4-mini:latest
+  apiBase: "http://localhost:11434"
+  contextLength: 2048
+
+# ============================================================================
+# 🔌 MCP SERVERS (Agent OS Integration)
+# ============================================================================
+mcpServers:
+  - name: agent-os
+    title: "Agent OS v2.1 MCP Server"
+    command: ".venv/bin/python"
+    args: 
+      - "mcp_server.py"
+    cwd: "/mnt/6724D393605CE580/Linux/LJMProjekte/Github/mcp-real-agent"
+    # All models above have FULL MCP-Agent v2.1 access!
+
+# ============================================================================
+# 📈 PERFORMANCE MATRIX (for reference)
+# ============================================================================
+# Model                       | Memory  | Speed    | Quality | Use Case
+# ─────────────────────────────┼─────────┼──────────┼─────────┼─────────────────
+# devstral-rtx3090 (PRIMARY)   | 15GB    | 3-7s     | ⭐⭐⭐⭐⭐ | Daily work
+# qwen2.5-coder:14b (CODER)    | 9GB     | 2-5s     | ⭐⭐⭐⭐  | Quick code
+# devstral-small-2:24b (POWER) | 15GB    | 5-10s    | ⭐⭐⭐⭐⭐ | Complex tasks
+# mistral-nemo (FAST)          | 7.1GB   | 1-2s     | ⭐⭐⭐   | Drafts
+# phi4-mini (MINI)             | 2.5GB   | 0.5-1s   | ⭐⭐    | Autocomplete
+# ─────────────────────────────┴─────────┴──────────┴─────────┴─────────────────
+# TOTAL GPU MEMORY USAGE (concurrent):
+#   - ALL MODELS: ~55GB (but only 24GB available → managed by Ollama)
+#   - PRACTICAL: 15GB + 9GB + 2.5GB = 26.5GB (fits with rotation)
+# 
+# CONCURRENT USAGE EXAMPLE:
+#   - agent (devstral-rtx3090): 15GB
+#   - coder (qwen2.5-coder:14b): 9GB
+#   - phi-mini (tab-complete): 0.2GB (cached)
+#   = ~20GB total (within 24GB limit!)
+
+# ============================================================================
+# ⚙️ OLLAMA ENVIRONMENT CONFIGURATION (CRITICAL!)
+# ============================================================================
+# 
+# BEFORE STARTING: Set these environment variables
+#
+# Option A - No CPU-Offload (RECOMMENDED):
+#   export OLLAMA_GPU_MEMORY=24576    # Full 24GB
+#   export OLLAMA_NUM_GPU=1           # RTX 3090
+#   export OLLAMA_NUM_THREAD=1        # No CPU-Offload!
+#
+# Option B - Conservative (Safe):
+#   export OLLAMA_GPU_MEMORY=20480    # 20GB (safety margin)
+#   export OLLAMA_NUM_GPU=1
+#   export OLLAMA_NUM_THREAD=4        # Light CPU-Offload if needed
+#
+# Option C - Professional (Linux only):
+#   export OLLAMA_GPU_MEMORY=23040    # 22.5GB (aggressive)
+#   export OLLAMA_NUM_GPU=1
+#   export OLLAMA_NUM_THREAD=1        # No CPU-Offload
+#
+# PERMANENT SETUP (add to ~/.bashrc):
+#   echo 'export OLLAMA_GPU_MEMORY=24576' >> ~/.bashrc
+#   echo 'export OLLAMA_NUM_GPU=1' >> ~/.bashrc
+#   echo 'export OLLAMA_NUM_THREAD=1' >> ~/.bashrc
+#   source ~/.bashrc
+
+# ============================================================================
+# 🚀 STARTUP INSTRUCTIONS
+# ============================================================================
+#
+# 1. SET ENVIRONMENT:
+#    export OLLAMA_GPU_MEMORY=24576
+#    export OLLAMA_NUM_GPU=1
+#    export OLLAMA_NUM_THREAD=1
+#
+# 2. START OLLAMA:
+#    ollama serve &
+#    sleep 3
+#
+# 3. START MCP-SERVER (Terminal 1):
+#    cd /mnt/6724D393605CE580/Linux/LJMProjekte/Github/mcp-real-agent
+#    source .venv/bin/activate
+#    python mcp_server.py
+#
+# 4. START CONTINUE (Terminal 2):
+#    continue dev
+#
+# 5. TEST IN CONTINUE:
+#    Mode: AGENT
+#    Model: agent (devstral-rtx3090)
+#    Prompt: debug: Schreibe eine Python Fibonacci Funktion
+#
+# 6. SWITCH MODELS:
+#    In Continue UI → Select from dropdown:
+#    - agent (primary, best quality)
+#    - coder (quick code)
+#    - qwen-power (complex tasks)
+#    - coder-fast (speed focus)
+#    - phi-mini (autocomplete)
+#
+# ============================================================================
+# 📊 MONITORING
+# ============================================================================
+#
+# NVIDIA Monitoring (in separate terminal):
+#   watch -n 1 nvidia-smi
+#
+# Expected Output:
+#   GPU  Name    Temp  Pwr Usage/Cap  Memory-Usage/Cap
+#   0    RTX3090  45C   200W / 420W    15GB / 24GB
+#
+# OLLAMA Logs:
+#   tail -f ~/.ollama/logs/server.log
+#
+# ============================================================================
+# 🎯 TUNING TIPS
+# ============================================================================
+#
+# If you get CUDA errors:
+#   1. Reduce OLLAMA_GPU_MEMORY to 20480 (20GB)
+#   2. Increase OLLAMA_NUM_THREAD to 8
+#   3. Or use Option B (Conservative)
+#
+# If models are too slow:
+#   1. Close other GPU applications
+#   2. Use faster models (coder or coder-fast)
+#   3. Check nvidia-smi for other GPU load
+#
+# For best performance:
+#   1. Use devstral-rtx3090 as primary
+#   2. Keep at least 2GB free for OS
+#   3. Monitor with watch nvidia-smi
+#   4. Test response times with consistent prompts
+

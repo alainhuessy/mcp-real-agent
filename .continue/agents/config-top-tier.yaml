@@ -1,0 +1,201 @@
+# Agent OS v2.1 — TOP-TIER Model Configuration
+# RTX 3090 + CPU-Offload Optimiert
+# Drei Profile zum Testen: FAST | BALANCED | POWER
+
+name: Agent OS v2.1 TOP-TIER
+version: 2.2.0
+schema: v1
+
+# ============================================================================
+# 🚀 PROFILE: BALANCED (aktuell empfohlen)
+# RTX 3090: Schnell + Gut für MCP-Agent
+# ============================================================================
+
+models:
+  # ⭐ PRIMARY: devstral-small-2:24b — Beste Agent-Workflows
+  # ✅ VORHANDEN: 15 GB, Ollama ID: 24277f07f62d
+  - name: agent  
+    title: "🟢 Devstral Small-2 24B (Agent Workflows) ⭐PRIMARY"
+    provider: ollama
+    model: devstral-small-2:24b
+    apiBase: "http://localhost:11434"
+    contextLength: 32000
+    # Ideal für: Daily MCP-Agent work
+    
+  # 🥈 FALLBACK: qwen2.5-coder:14b — Schnelle Iteration
+  # ✅ VORHANDEN: 9.0 GB, Ollama ID: 9ec8897f747e
+  - name: coder
+    title: "⚡ Qwen 2.5 Coder 14B (Quick Iteration)"
+    provider: ollama
+    model: qwen2.5-coder:14b
+    apiBase: "http://localhost:11434"
+    contextLength: 28000
+    # Ideal für: Schnelle Codegen, Refactoring
+
+# ============================================================================
+# 🔬 PROFILE: POWER (für Qualität > Speed)
+# Aktiviere die folgenden für intensives Testing mit CPU-Offload
+# NUR aktivieren wenn du Zeit hast für längere Inference!
+# ============================================================================
+
+# Power-Tier Models (großer, aber mit offload machbar):
+
+# ✅ VORHANDEN - 51GB (mit CPU-offload)
+#  - name: qwen-power
+#    title: "💪 Qwen3-Coder-Next 51B (Power Agent)"
+#    provider: ollama
+#    model: qwen3-coder-next:latest
+#    apiBase: "http://localhost:11434"
+#    contextLength: 32000
+#    # Ollama ID: ce187ebedf7f
+#    # Ideal für: Komplexe Multi-File Agents
+#    # Status: ✅ READY - Uncomment zum Aktivieren!
+
+# ✅ VORHANDEN - 24GB (MoE, nur 3B aktiv) 
+#  - name: nemotron-reasoning
+#    title: "🧠 Nemotron Cascade-2 30B (MoE Reasoning)"
+#    provider: ollama
+#    model: nemotron-cascade-2:latest
+#    apiBase: "http://localhost:11434"
+#    contextLength: 32000
+#    # Ollama ID: a1af7f431173
+#    # Ideal für: Komplexe Reasoning + Planning
+#    # Status: ✅ READY - Uncomment zum Aktivieren!
+
+# ❌ NICHT VORHANDEN - Später verfügbar
+#  Modell: glm-5.1:latest
+#  Status: ❌ NICHT auf ollama.com released
+#  Aktion: Später: ollama pull glm-5.1:latest
+
+# ============================================================================
+# 🏃 PROFILE: FAST (nur zum schnellen Testen)
+# Aktiviere NUR wenn du schnelle Ergebnisse brauchst
+# ============================================================================
+
+# Fast-Tier Models (klein & schnell) - ALLE ✅ VORHANDEN:
+
+# ✅ VORHANDEN - 7.1 GB (super schnell)
+#  - name: coder-fast
+#    title: "⚡⚡ Mistral Nemo 7B (Super Fast)"
+#    provider: ollama
+#    model: mistral-nemo:latest
+#    apiBase: "http://localhost:11434"
+#    contextLength: 12000
+#    # Ollama ID: f3df5848a86f
+#    # Ideal für: Autocomplete, schnelle Drafts
+#    # Status: ✅ READY - Uncomment zum Aktivieren!
+
+# ✅ VORHANDEN - 2.5 GB (extrem schnell)
+#  - name: mini-reasoning
+#    title: "📱 Phi Mini (Lightweight)"
+#    provider: ollama
+#    model: phi4-mini:latest
+#    apiBase: "http://localhost:11434"
+#    contextLength: 8000
+#    # Ollama ID: 64625169beca
+#    # Ideal für: Tab-Autocomplete
+#    # Status: ✅ READY - Uncomment zum Aktivieren!
+
+# ✅ VORHANDEN - 4.1 GB (chat-optimiert) - Optional
+#  - name: neural-chat-fast
+#    title: "💬 Neural Chat (Chat Optimized)"
+#    provider: ollama
+#    model: neural-chat:latest
+#    apiBase: "http://localhost:11434"
+#    contextLength: 8000
+#    # Ollama ID: 89fa737d3b85
+#    # Ideal für: Chat-basierte Tasks
+#    # Status: ✅ READY - Uncomment zum Aktivieren!
+
+# Tab Autocomplete Model (schnell)
+tabAutocompleteModel:
+  name: coder
+  title: "Qwen 2.5 Coder (Autocomplete)"
+  provider: ollama
+  model: qwen2.5-coder:14b
+  apiBase: "http://localhost:11434"
+  contextLength: 2048
+
+# ============================================================================
+# 🔌 MCP Servers - Integration mit Agent OS
+# ============================================================================
+mcpServers:
+  - name: agent-os
+    title: "Agent OS v2.1 MCP Server"
+    command: ".venv/bin/python"
+    args: 
+      - "mcp_server.py"
+    cwd: "/mnt/6724D393605CE580/Linux/LLM_Projekte/Github/mcp-real-agent"
+    # ✅ Alle Modelle oben haben MCP-Zugriff
+    # via diesen Server!
+
+# ============================================================================
+# ⚙️ KONFIGURATION: Ollama Performance
+# ============================================================================
+
+# Optional: Wenn du diese config.yaml für lokale Ollama-Optionen nutzen willst:
+# 
+# OLLAMA_NUM_GPU: 1           # Nutze 1 GPU (RTX 3090)
+# OLLAMA_NUM_PARALLEL: 1      # 1 parallele Request
+# OLLAMA_NUM_THREAD: 12       # 12 CPU Threads
+# OLLAMA_GPU_MEMORY: 24576    # 24GB VRAM
+# 
+# Für größere Modelle mit CPU-Offload:
+# OLLAMA_GPU_MEMORY: 16384    # 16GB für GPU
+# Rest läuft auf CPU (aber langsamer)
+
+# ============================================================================
+# 💡 USAGE INSTRUCTIONS
+# ============================================================================
+
+# 1. AKTIVIERE ein Profil:
+#
+#    Option A) BALANCED (aktuell aktiv - empfohlen):
+#      - devstral-small-2:24b (agent) ✅ VORHANDEN
+#      - qwen2.5-coder:14b (coder) ✅ VORHANDEN
+#      Status: ✅ SOFORT NUTZBAR!
+#
+#    Option B) POWER (teste großere Modelle):
+#      - qwen3-coder-next:latest ✅ VORHANDEN (51GB)
+#      - nemotron-cascade-2:latest ✅ VORHANDEN (24GB)
+#      - glm-5.1:latest ❌ NICHT (später: ollama pull glm-5.1:latest)
+#      Status: 🟡 Uncomment zum Aktivieren
+#      Aktion: Uncomment die folgenden Zeilen oben
+#
+#    Option C) FAST (nur schnelle Tests):
+#      - mistral-nemo:latest ✅ VORHANDEN (7.1GB)
+#      - phi4-mini:latest ✅ VORHANDEN (2.5GB)
+#      - neural-chat:latest ✅ VORHANDEN (4.1GB, optional)
+#      Status: ✅ Uncomment zum Aktivieren
+#      Aktion: Uncomment die folgenden Zeilen oben
+
+# 2. Download-Skripte (nicht nötig - alles da!):
+#    - setup_top_tier_models.sh (skip - alles schon heruntergeladen)
+#    - pull_power_models.sh (skip - alles schon heruntergeladen)
+#    - pull_fast_models.sh (skip - alles schon heruntergeladen)
+
+# ============================================================================
+# 📊 Cheatsheet: Modelle für deine RTX 3090  
+# ============================================================================
+
+# ✅ EMPFOHLEN - JETZT VERWENDEN (Status: SOFORT BEREIT):
+#   - devstral-small-2:24b (15GB VRAM) - PRIMARY AGENT
+#   - qwen2.5-coder:14b (9GB VRAM) - Fallback/Quick
+#
+# ✅ POWER PROFILE - SPÄTER TESTEN (Uncomment oben):
+#   - qwen3-coder-next:latest (51GB mit CPU-offload)
+#   - nemotron-cascade-2:latest (24GB MoE)
+#   - glm-5.1:latest ❌ FEHLT (später: ollama pull glm-5.1:latest)
+#
+# ✅ FAST PROFILE - OPTIONAL (Uncomment oben):
+#   - mistral-nemo:latest (7.1GB - super schnell)
+#   - phi4-mini:latest (2.5GB - extrem schnell)
+#   - neural-chat:latest (4.1GB - chat)
+
+# ============================================================================
+# 🔗 Links & Referenzen
+# ============================================================================
+# Ollama Docs: https://docs.ollama.com/
+# Model Library: https://ollama.com/models
+# GPU Offload: https://docs.ollama.com/guides/ollama-behind-http
+# Continue MCP: https://docs.continue.dev/customization/mcp-tools

@@ -1,0 +1,17 @@
+{
+  "metadata": {
+    "task_id": "5b30ed16",
+    "timestamp": "2026-04-18_13-20-41",
+    "task_name": "Warum ist memory.search() so langsam?"
+  },
+  "execution": {
+    "mode": "rag",
+    "duration_seconds": 5.15,
+    "status": "success"
+  },
+  "llm": {
+    "response_preview": "```python\ndef process_list(input_list):\n    \"\"\"\n    Applies a transformation function to each element in the input list and filters out elements that don't meet a certain condition.\n    \n    Args:\n        input_list (list): The list of numbers to be processed.\n        \n    Returns:\n        list: A new list containing only the elements for which the transformation was successful.\n    \"\"\"\n    \n    # Define the transformation function\n    def square(x):\n        return x * x\n    \n    # Use map() to ",
+    "response_full": "```python\ndef process_list(input_list):\n    \"\"\"\n    Applies a transformation function to each element in the input list and filters out elements that don't meet a certain condition.\n    \n    Args:\n        input_list (list): The list of numbers to be processed.\n        \n    Returns:\n        list: A new list containing only the elements for which the transformation was successful.\n    \"\"\"\n    \n    # Define the transformation function\n    def square(x):\n        return x * x\n    \n    # Use map() to apply the transformation function to each element in the input list\n    mapped_list = list(map(square, input_list))\n    \n    # Use filter() to get only the elements that don't meet a certain condition (in this case, numbers greater than 10)\n    filtered_list = list(filter(lambda x: x > 10, mapped_list))\n    \n    return filtered_list\n\n# Test the function\ninput_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\nprint(process_list(input_list))\n```\n\nDie Funktion `process_list()` nimmt eine Liste von Zahlen als Eingabe und gibt eine neue Liste zurück, die nur die Elemente enthält, für die die Transformation erfolgreich war. Die Transformation wird durch die Funktion `square(x)` definiert, die den Quadrat der Zahl `x` zurückgibt.\n\nDie Map-Funktion (`map()`) wird verwendet, um die Transformation auf jeden Element in der Eingabedatei anzuwenden. Die Ergebnisse werden als Liste gespeichert.\n\nAnschließend wird die Filter-Funktion (`filter()`) verwendet, um nur die Elemente zu behalten, deren Wert größer als 10 ist. Die Ergebnisse werden als Liste gespeichert und zurückgegeben.\n\nDie Funktion kann mit einer Liste von Zahlen getestet werden, wie im letzten Abschnitt gezeigt.",
+    "response_length": 1668
+  }
+}

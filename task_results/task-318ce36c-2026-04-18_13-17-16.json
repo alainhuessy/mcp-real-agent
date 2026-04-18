@@ -1,0 +1,17 @@
+{
+  "metadata": {
+    "task_id": "318ce36c",
+    "timestamp": "2026-04-18_13-17-16",
+    "task_name": "Schreibe eine Python-Funktion für Listenverarbeitung mit Map und Filter"
+  },
+  "execution": {
+    "mode": "chat",
+    "duration_seconds": 3.49,
+    "status": "success"
+  },
+  "llm": {
+    "response_preview": "```python\ndef process_list(input_list):\n    \"\"\"\n    Applies a transformation function to each element in the input list and filters out elements that don't meet a certain condition.\n    \n    Args:\n        input_list (list): The list of numbers to be processed.\n        \n    Returns:\n        list: A new list containing only the elements for which the transformation was successful.\n    \"\"\"\n    \n    # Define the transformation function\n    def square(x):\n        return x * x\n    \n    # Use map() to ",
+    "response_full": "```python\ndef process_list(input_list):\n    \"\"\"\n    Applies a transformation function to each element in the input list and filters out elements that don't meet a certain condition.\n    \n    Args:\n        input_list (list): The list of numbers to be processed.\n        \n    Returns:\n        list: A new list containing only the elements for which the transformation was successful.\n    \"\"\"\n    \n    # Define the transformation function\n    def square(x):\n        return x * x\n    \n    # Use map() to apply the transformation function to each element in the input list\n    transformed_list = map(square, input_list)\n    \n    # Use filter() to keep only the elements for which the transformation was successful (i.e., those that are not zero)\n    filtered_list = filter(lambda x: x != 0, transformed_list)\n    \n    return list(filtered_list)\n\n# Example usage:\nnumbers = [1, -2, 3, 0, 4, -5]\nprint(process_list(numbers))  # Output: [(1, ), (4, ), (16, ), (25, )]\n```",
+    "response_length": 963
+  }
+}

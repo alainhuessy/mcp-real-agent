@@ -12,6 +12,12 @@ class Scheduler:
     """OS-Level Loop — arbeitet Tasks automatisch ab."""
 
     def __init__(self, task_queue: TaskQueue, interval: float = 2.0):
+        """Initialize Task Scheduler.
+        
+        Args:
+            task_queue: TaskQueue instance for managing tasks
+            interval: Polling interval in seconds (default: 2.0)
+        """
         self.queue = task_queue
         self.interval = interval
         self.running = False
@@ -33,5 +39,6 @@ class Scheduler:
             time.sleep(0.5)
 
     def stop(self):
+        """Stop the task scheduler."""
         self.running = False
         console.print("[red]⏹ Scheduler gestoppt[/red]")

@@ -10,6 +10,11 @@ class WorkspaceIntelligence:
     """Analysiert Projekt-Struktur, Git, Code-Quality, Dependencies."""
     
     def __init__(self, project_root: str = "."):
+        """Initialize Workspace Intelligence with project root.
+        
+        Args:
+            project_root: Root directory for project analysis (default: current directory)
+        """
         self.root = Path(project_root)
     
     def analyze_project(self) -> dict:

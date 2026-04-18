@@ -1,0 +1,263 @@
+# Agent OS v2.1 — TOOL-USE OPTIMIZED Configuration (from ollama.com research)
+# 🎯 RTX 3090 + Continue IDE + MCP Agent
+# 
+# RESEARCH FINDINGS (UPDATED APRIL 2026):
+# - llama3-groq-tool-use:8b: BEST FOR TOOL-USE (explicit function calling training)
+# - qwen3-coder:30b: BEST FOR AGENTIC (software engineering agents)
+# - qwen3.6:latest: ⭐ NEW STATE-OF-ART (vision + tools + thinking + 256K context!)
+# - qwen2.5-coder:14b: PROVEN FALLBACK (stable, well-tested)
+# 
+# STATUS: PRODUCTION-READY + LATEST MODELS based on ollama.com/library
+# LATEST UPDATE: ✅ qwen3.6 now available! Premium agentic model.
+
+name: Agent OS v2.1 — TOOL-USE OPTIMIZED
+version: 3.1.0
+schema: v1
+
+# ============================================================================
+# 🎯 TIER 1: TOOL-USE SPECIALISTS (recommended by ollama.com)
+# ============================================================================
+
+models:
+  
+  # 🥇 PRIMARY AGENT MODEL: llama3-groq-tool-use:8B
+  # - EXPLICIT training for function calling / tool-use
+  # - RTX 3090: 8GB GPU (perfect!)
+  # - Continue IDE: Full integration
+  # - MCP Agent: ⭐⭐⭐⭐⭐ IDEAL
+  # - Performance: 3-5 seconds, ultra-reliable tool calling
+  # - Status: ✅ PRODUCTION READY
+  - name: agent
+    title: "🟢 llama3-groq-tool-use:8B (PRIMARY - TOOL-USE)"
+    provider: ollama
+    model: llama3-groq-tool-use:8b
+    apiBase: "http://localhost:11434"
+    contextLength: 8192
+    
+  # 💪 POWER VARIANT: llama3-groq-tool-use:70B
+  # - Same tool-calling architecture but deeper reasoning
+  # - RTX 3090: 24GB GPU (or 20GB GPU + CPU-offload)
+  # - Performance: 5-15 seconds (with reasoning)
+  # - Use for: Complex multi-file editing, deep analysis
+  # - Status: ✅ AVAILABLE
+  - name: agent-power
+    title: "💪 llama3-groq-tool-use:70B (POWER - DEEP REASONING)"
+    provider: ollama
+    model: llama3-groq-tool-use:70b
+    apiBase: "http://localhost:11434"
+    contextLength: 8192
+
+# ============================================================================
+# 🥈 TIER 2: AGENTIC CODING (specialized for agent workflows)
+# ============================================================================
+
+  # AGENTIC WORKFLOWS: qwen3-coder:30B
+  # - Alibaba's "performant long context models for agentic and coding tasks"
+  # - Tool-support confirmed: tags = ["tools", "cloud"]
+  # - RTX 3090: 15GB GPU (Q4 quantization)
+  # - Performance: 5-10 seconds
+  # - Continue IDE: Full "cloud" mode support
+  # - Status: ✅ RECOMMENDED
+  - name: coder
+    title: "⚡ qwen3-coder:30B (AGENTIC CODING)"
+    provider: ollama
+    model: qwen3-coder:30b
+    apiBase: "http://localhost:11434"
+    contextLength: 32000
+    
+  # ALTERNATIVE: qwen3-coder-next (if newer version available)
+  # - Status: Coming soon, bleeding-edge
+  # - name: coder-next
+  #   title: "🚀 qwen3-coder-next (LATEST AGENTIC)"
+  #   model: qwen3-coder-next:latest
+
+# ============================================================================
+# 🥉 TIER 3: QUICK CODE + FALLBACK
+# ============================================================================
+
+  # FAST CODE GENERATION: qwen2.5-coder:14B
+  # - Proven, stable, tool-support
+  # - RTX 3090: 9GB GPU
+  # - Performance: 2-5 seconds
+  # - Use for: Quick drafts, rapid iteration
+  # - Continue IDE: Full support
+  - name: coder-quick
+    title: "⚡⚡ qwen2.5-coder:14B (QUICK CODE)"
+    provider: ollama
+    model: qwen2.5-coder:14b
+    apiBase: "http://localhost:11434"
+    contextLength: 28000
+
+# ============================================================================
+# ⚡ TIER 4: LIGHTWEIGHT (for tab-autocomplete + edge cases)
+# ============================================================================
+
+  # ULTRA-FAST: mistral-nemo:12B
+  # - RTX 3090: 7GB GPU
+  # - Performance: 1-2 seconds
+  # - Use for: Tab-autocomplete, fast suggestions
+  - name: coder-fast
+    title: "⚡⚡⚡ Mistral Nemo 12B (ULTRA-FAST)"
+    provider: ollama
+    model: mistral-nemo:latest
+    apiBase: "http://localhost:11434"
+    contextLength: 12000
+    
+  # MINIMAL: phi4-mini:3.8B
+  # - RTX 3090: 2-3GB GPU
+  # - Performance: <1 second
+  # - Use for: Tab completion only
+  - name: phi-mini
+    title: "📱 Phi4-Mini 3.8B (LIGHTWEIGHT)"
+    provider: ollama
+    model: phi4-mini:latest
+    apiBase: "http://localhost:11434"
+    contextLength: 8000
+
+# ============================================================================
+# 🔮 TIER 5: STATE-OF-ART (NOW AVAILABLE!)
+# ============================================================================
+
+  # 🚀 NEWEST STATE-OF-ART: qwen3.6 (April 2026) ✅ NOW AVAILABLE!
+  # - "Qwen3.6 delivers substantial upgrades in agentic coding"
+  # - Vision + Tools + Thinking
+  # - Context: 256K tokens (16x more than llama3-groq-tool-use:8b!)
+  # - RTX 3090: 24GB GPU (fits exactly!)
+  # - Performance: 5-15 seconds (with deep reasoning + vision)
+  # - Status: ✅ PRODUCTION READY
+  # - Best for: Complex multi-file refactoring, vision tasks
+  - name: qwen3.6-premium
+    title: "🚀 Qwen3.6 Latest (STATE-OF-ART - NEWEST!)"
+    provider: ollama
+    model: qwen3.6:latest
+    apiBase: "http://localhost:11434"
+    contextLength: 256000
+  
+  # REASONING AGENT: glm-5.1 (Nov 2024)
+  # - "State-of-Art for agentic engineering"
+  # - Leader in SWE-Bench Pro (Software Engineering Agents!)
+  # - Status: ⏳ Zu groß für RTX 3090 ohne extreme offloading
+  # - name: glm-5.1
+  #   title: "🧠 GLM-5.1 (BEST AGENTS - wenn CPU available)"
+  #   model: glm-5.1:latest
+
+# ============================================================================
+# 📊 TAB AUTOCOMPLETE (runs during typing)
+# ============================================================================
+
+tabAutocompleteModel:
+  name: phi-mini
+  title: "Phi4-Mini (Tab-Complete)"
+  provider: ollama
+  model: phi4-mini:latest
+  apiBase: "http://localhost:11434"
+  contextLength: 2048
+
+# ============================================================================
+# 🔌 MCP SERVERS (Agent OS Integration)
+# ============================================================================
+
+mcpServers:
+  - name: agent-os
+    title: "Agent OS v2.1 MCP Server"
+    command: "/mnt/6724D393605CE580/Linux/LLM_Projekte/Github/mcp-real-agent/.venv/bin/python"
+    args: 
+      - "/mnt/6724D393605CE580/Linux/LLM_Projekte/Github/mcp-real-agent/mcp_server.py"
+    cwd: "/mnt/6724D393605CE580/Linux/LLM_Projekte/Github/mcp-real-agent"
+
+# ============================================================================
+# ⚙️ SETUP INSTRUCTIONS
+# ============================================================================
+#
+# 1. INSTALL ALL MODELS (RECOMMENDED):
+#
+#    # Tier 1: Tool-Use Specialists
+#    ollama pull llama3-groq-tool-use:8b       # PRIMARY
+#    ollama pull llama3-groq-tool-use:70b      # POWER
+#
+#    # Tier 2: Agentic Coding
+#    ollama pull qwen3-coder:30b              # AGENTIC
+#
+#    # Tier 3: Quick Fallback
+#    ollama pull qwen2.5-coder:14b            # QUICK
+#
+#    # Tier 4: Speed Variants
+#    ollama pull mistral-nemo:latest          # FAST
+#    ollama pull phi4-mini:latest             # LITE
+#
+#    # Tier 5: STATE-OF-ART (NEW!)
+#    ollama pull qwen3.6:latest               # STATE-OF-ART ✅ NOW AVAILABLE!
+#
+# 2. WHY THESE MODELS?
+#
+#    ✅ llama3-groq-tool-use
+#       - Only model on ollama.com EXPLICITLY trained for tool-use
+#       - agent.py will use this for MCP tool calling
+#       - JSON-Schema function definitions = understood
+#
+#    ✅ qwen3-coder
+#       - Alibaba: "agentic and coding tasks"
+#       - Cloud-mode support for Continue IDE
+#       - Multi-file editing for software engineering
+#
+#    ✅ qwen2.5-coder
+#       - Proven, stable, good fallback
+#       - Fast enough for quick iteration
+#
+# 3. WHY NOT DEVSTRAL?
+#
+#    ❌ devstral:24B - "coding agents" but weak tool-calling
+#    ❌ Not explicitly trained for function calling != llama3-groq-tool-use
+#    ❌ This is why you had issues with tool integration!
+#
+# 4. TOTAL GPU USAGE (CONCURRENT):
+#
+#    Daily Work:
+#    - llama3-groq-tool-use:8b     (8GB)
+#    - phi4-mini:3.8b              (3GB) for autocomplete
+#    = 11GB total, fits easily on RTX 3090!
+#
+#    Heavy Work (rotate models):
+#    - qwen3-coder:30b             (15GB)
+#    - Backup: qwen2.5-coder:14b   (9GB)
+#    = One at a time, perfect fit!
+#
+# ============================================================================
+# 🎯 OLLAMA ENVIRONMENT SETUP (CRITICAL!)
+# ============================================================================
+#
+# Export before starting:
+#
+#   export OLLAMA_GPU_MEMORY=24576    # Full 24GB
+#   export OLLAMA_NUM_GPU=1           # RTX 3090
+#   export OLLAMA_NUM_THREAD=1        # NO CPU-Offload (unless heavy work)
+#
+# Optional for heavy tasks:
+#
+#   export OLLAMA_GPU_MEMORY=20480    # 20GB GPU
+#   export OLLAMA_NUM_THREAD=8        # Use CPU for offload
+#
+# ============================================================================
+# 📈 PERFORMANCE EXPECTATIONS
+# ============================================================================
+#
+# Model                          | Memory  | Speed   | Quality | Best Use
+# ─────────────────────────────────────────────────────────────────────────
+# qwen3.6:latest                 | 24 GB   | 5-15s   | ⭐⭐⭐⭐⭐⭐ | Complex tasks (NEW!)
+# llama3-groq-tool-use:8b        | 8 GB    | 3-5s    | ⭐⭐⭐⭐⭐ | Daily work
+# qwen3-coder:30b                | 15 GB   | 5-10s   | ⭐⭐⭐⭐⭐ | Agentic workflows
+# qwen2.5-coder:14b              | 9 GB    | 2-5s    | ⭐⭐⭐⭐  | Quick drafts
+# mistral-nemo:12b               | 7 GB    | 1-2s    | ⭐⭐⭐   | Fast iteration
+# phi4-mini:3.8b                 | 3 GB    | <1s     | ⭐⭐    | Tab-complete
+# ─────────────────────────────────────────────────────────────────────────
+#
+# ============================================================================
+# 🔗 REFERENCES
+# ============================================================================
+#
+# Ollama Library: https://ollama.com/library
+# Tool-Use Models: llama3-groq-tool-use, qwen3-coder
+# Research Date: 2026-04-18
+# Agent OS Version: v2.1
+#
+# ============================================================================

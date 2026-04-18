@@ -1,0 +1,47 @@
+{
+  "task_name": "Test Task",
+  "created_at": "2026-04-18T11:48:00.740845",
+  "todos": [
+    {
+      "id": 1,
+      "title": "Step 1",
+      "description": "",
+      "status": "completed",
+      "created_at": "2026-04-18T11:48:00.741368",
+      "started_at": "2026-04-18T11:48:00.741898",
+      "completed_at": "2026-04-18T11:48:00.742514",
+      "error_message": null
+    },
+    {
+      "id": 2,
+      "title": "Step 2",
+      "description": "",
+      "status": "blocked",
+      "created_at": "2026-04-18T11:48:00.741554",
+      "started_at": null,
+      "completed_at": null,
+      "error_message": "Waiting for approval"
+    },
+    {
+      "id": 3,
+      "title": "Step 3",
+      "description": "",
+      "status": "completed",
+      "created_at": "2026-04-18T11:48:00.741727",
+      "started_at": "2026-04-18T11:48:00.743745",
+      "completed_at": "2026-04-18T11:48:00.744402",
+      "error_message": null
+    }
+  ],
+  "summary": {
+    "task_name": "Test Task",
+    "total_todos": 3,
+    "completed": 2,
+    "in_progress": 0,
+    "failed": 0,
+    "blocked": 1,
+    "completion_percentage": 66,
+    "total_duration_seconds": 0.004037,
+    "status": "IN_PROGRESS"
+  }
+}

@@ -10,16 +10,32 @@ agent = AgentOS()
 
 
 class TaskRequest(BaseModel):
+    """Request model for task execution.
+    
+    Attributes:
+        task: Task description
+        priority: Task priority level (default: 1)
+    """
     task: str
     priority: int = 1
 
 
 class ShellRequest(BaseModel):
+    """Request model for shell command execution.
+    
+    Attributes:
+        command: Shell command to execute
+    """
     command: str
 
 
 @app.get("/")
 def root():
+    """Health check endpoint - returns system status.
+    
+    Returns:
+        dict: Status information
+    """
     return {"status": "running", "system": "Agent OS v2.1"}
 
 
@@ -45,7 +61,11 @@ def list_tasks():
 
 @app.get("/status")
 def status():
-    """Systemstatus."""
+    """Get system status and metrics.
+    
+    Returns:
+        dict: System status and performance metrics
+    """
     return {
         "status": "running",
         "pending_tasks": agent.tasks.get_pending_count(),

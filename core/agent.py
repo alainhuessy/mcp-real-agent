@@ -19,10 +19,39 @@ console = Console()
 
 
 class AgentOS:
-    """Agent Operating System v2.1 — Kernel."""
+    """Agent Operating System v2.1 — Multi-Agent Kernel.
+    
+    Das AgentOS ist der zentrale Orchestrator für eine intelligente Multi-Agent Pipeline:
+    
+    Pipeline-Flow:
+        1. Router: Bestimmt den Ausführungsmodus (planner/worker/reviewer)
+        2. Planner: Zerlegt komplexe Tasks in Subtasks
+        3. Worker: Führt Tasks aus mit Zugriff auf Tools und LLM
+        4. Reviewer: Überprüft Qualität der Ergebnisse
+        5. Memory: Speichert Erkenntnisse für zukünftige Tasks
+    
+    Komponenten:
+        - LLM: Lokale Language Model über Ollama
+        - Router: Intelligentes Task-Routing
+        - Memory: ChromaDB Vector Memory für semantische Suche
+        - TaskQueue: Verwaltete Warteschlange für autonome Ausführung
+        - ToolRegistry: Plugin-System für Shell, File, Git, etc.
+        - Multi-Agent System: Planner → Worker → Reviewer Pipeline
+    """
 
     def __init__(self):
-        # Core
+        """Initialisiert die Agent OS Komponenten und ihr Zusammenspiel.
+        
+        Führt folgende Intialisierungsschritte durch:
+        1. LLM Module: Language Model über Ollama laden
+        2. Core Komponenten: Router, Memory, TaskQueue
+        3. Tool Registry: Plugin-System aufbauen (Shell, File, Git)
+        4. Multi-Agent System: Planner, Worker, Reviewer initialisieren
+        
+        Die Komponenten werden anschließend über 'run_task()' oder 'run_loop()' 
+        orchestriert.
+        """
+        # Core Infrastructure
         self.llm = LLM()
         self.router = Router()
         self.memory = Memory()
@@ -38,7 +67,17 @@ class AgentOS:
         self.reviewer = ReviewerAgent(self.llm)
 
     def _register_default_tools(self):
-        """Registriert die Standard-Tools."""
+        """Registriert die Standard-Tools im Plugin-Registry.
+        
+        Diese Tools stehen allen Agenten zur Verfügung:
+        - shell: Shell-Befehle ausführen (mit Sicherheits-Allowlist)
+        - read_file: Dateien lesen
+        - write_file: Dateien schreiben
+        - list_dir: Verzeichnisinhalt auflisten
+        - git_*: Git-Operationen (status, commit, log)
+        
+        Neue Tools können später mit self.tools.register() hinzugefügt werden.
+        """
         self.tools.register("shell", shell, "Execute shell commands (allowlisted)")
         self.tools.register("read_file", read_file, "Read a file")
         self.tools.register("write_file", lambda p: write_file(p), "Write a file")
@@ -48,7 +87,27 @@ class AgentOS:
         self.tools.register("git_log", lambda _: git_log(), "Git log")
 
     def run_task(self, task: str) -> str:
-        """Führt einen einzelnen Task durch die Pipeline: Route → Execute → Review → Memory."""
+        """Führt einen einzelnen Task durch die vollständige Pipeline.
+        
+        Prozessablauf:
+        1. Memory-Kontext: Sucht ähnliche Tasks in der Vector-Datenbank
+        2. Routing: Router bestimmt den optimalen Ausführungsmodus
+        3. Planung (optional): Bei "planner" Mode werden Subtasks erzeugt
+        4. Ausführung: Worker führt den Task mit LLM und Tools aus
+        5. Review: Reviewer bewertet Qualität und Vollständigkeit
+        6. Memory-Update: Ergebnis wird für zukünftige Anfragen gespeichert
+        
+        Args:
+            task: Textuelle Beschreibung des auszuführenden Tasks
+        
+        Returns:
+            str: Vollständiges Ergebnis oder Status-Nachricht (z.B. bei Planung)
+        
+        Hinweis:
+            - Bei "planner" Mode werden Subtasks in die Queue eingereiht
+            - Der Reviewer kann "approved=False" zurückgeben wenn Qualität gering ist
+            - Ergebnisse werden automatisch in Memory gespeichert
+        """
         # 1. Memory-Kontext holen
         mem_ctx = self.memory.search(task)
 
@@ -78,7 +137,28 @@ class AgentOS:
         return result
 
     def run_loop(self):
-        """Autonomer Task Loop — arbeitet Queue ab."""
+        """Startet den autonomen Task-Loop für kontinuierliche Verarbeitung.
+        
+        Diese Methode blockiert und läuft solange bis manuell unterbrochen (Ctrl+C):
+        
+        Ablauf in jeder Iteration:
+        1. TaskQueue: Nächsten Task aus der Warteschlange holen
+        2. Bei Task vorhanden: Setze Status auf "running"
+        3. Ausführung: run_task() aufrufen für die vollständige Pipeline
+        4. Status-Update: Task als "completed" oder "failed" markieren
+        5. Pause: 1-2 Sekunden Wartezeit vor der nächsten Task
+        
+        Fehlerbehandlung:
+        - Exceptions werden gefangen und in der TaskQueue protokolliert
+        - Agent läuft weiter auch wenn einzelne Tasks fehlschlagen
+        
+        Polling:
+        - Wenn Queue leer: 2 Sekunden warten, dann erneut prüfen
+        - Dies ermöglicht asynchrone Task-Hinzufügung während der Ausführung
+        
+        Hinweis:
+            Drücke Ctrl+C um den Loop zu stoppen. Die Logs zeigen alle ausgeführten Tasks.
+        """
         console.print(Panel("🧠 Agent OS v2.1 — Autonomer Loop gestartet", style="bold green"))
 
         import time

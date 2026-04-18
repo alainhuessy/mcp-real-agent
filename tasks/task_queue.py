@@ -9,6 +9,7 @@ class TaskQueue:
     """In-Memory Task Queue mit Status-Management."""
 
     def __init__(self):
+        """Initialize empty task queue for task management."""
         self.tasks: list[dict] = []
 
     def add(self, task: str, priority: int = 1, context: list[str] | None = None) -> dict:
@@ -47,4 +48,9 @@ class TaskQueue:
         return self.tasks
 
     def get_pending_count(self) -> int:
+        """Get count of pending tasks in queue.
+        
+        Returns:
+            int: Number of pending tasks
+        """
         return len([t for t in self.tasks if t["status"] == "pending"])

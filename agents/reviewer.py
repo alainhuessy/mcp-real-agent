@@ -16,6 +16,11 @@ class ReviewerAgent:
     """Quality Gate — validiert Ergebnisse vor Memory-Speicherung."""
 
     def __init__(self, llm: LLM):
+        """Initialize Reviewer Agent with LLM instance.
+        
+        Args:
+            llm: LLM instance for reviewing outputs
+        """
         self.llm = llm
 
     def review(self, task: str, output: str) -> dict:

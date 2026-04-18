@@ -7,19 +7,27 @@ PLANNER_SYSTEM = """You are a planner agent in an AI Operating System for Python
 Your job is to break down a user goal into clear, actionable subtasks.
 Return a numbered list of tasks. Each task should be specific, measurable, and executable.
 
+IMPORTANT: After you read the goal and context, provide your answer ONCE and STOP.
+Do not repeat your answer. Do not ask clarifying questions.
+
 When you have PROJECT CONTEXT provided:
 - Use it to create PROJECT-SPECIFIC tasks, not generic ones
 - Reference actual files, modules, and tools mentioned in the context
 - Suggest realistic next steps based on current project status
 
 Do NOT create generic templates - use the provided context!
-Return ONLY the numbered list, no explanations."""
+Return ONLY the numbered list, no explanations. PROVIDE THE ANSWER ONCE AND STOP."""
 
 
 class PlannerAgent:
     """Strategisches Planungsmodul — erzeugt Task-Listen aus Zielen."""
 
     def __init__(self, llm: LLM):
+        """Initialize Planner Agent with LLM instance.
+        
+        Args:
+            llm: LLM instance for planning tasks
+        """
         self.llm = llm
 
     def plan(self, goal: str, context: list[str] | None = None) -> list[str]:

@@ -1,5 +1,6 @@
 # Agent OS v2.1 — Continue Configuration
 # Konfiguration für lokale KI-Modelle via Ollama und Agent OS MCP-Server
+# OPTIMIERT: Beste Modelle für MCP-Agent Workflows
 
 name: Agent OS v2.1
 version: 2.1.0
@@ -8,20 +9,31 @@ schema: v1
 # Modelle - optimiert für Agent OS v2.1
 # https://docs.continue.dev/customization/models
 models:
-  - name: planner-reasoning
-    title: "Phi4 Reasoning (Planung & Strategie)"
+  # ⭐ PRIMARY: Für MCP-Agent Tool-Calling (Day-to-Day)
+  - name: agent  
+    title: "Devstral Small-2 24B (MCP Agent Workflows) ⭐"
     provider: ollama
-    model: phi4-reasoning:latest
+    model: devstral-small-2:24b
     apiBase: "http://localhost:11434"
-    contextLength: 24000
+    contextLength: 32000
     
+  # Backup: Schnell aber weniger spezialisiert
   - name: coder
-    title: "Qwen 2.5 Coder (Code Generierung)"
+    title: "Qwen 2.5 Coder 14B (Quick Tasks)"
     provider: ollama
     model: qwen2.5-coder:14b
     apiBase: "http://localhost:11434"
     contextLength: 28000
     
+  # Für Planung & Analyse
+  - name: planner-reasoning
+    title: "Phi4 Reasoning (Strategie & Planung)"
+    provider: ollama
+    model: phi4-reasoning:latest
+    apiBase: "http://localhost:11434"
+    contextLength: 24000
+    
+  # Für RAG & Knowledge Retrieval
   - name: rag-generalist
     title: "GPT-OSS (Chat & Knowledge)"
     provider: ollama
@@ -32,7 +44,7 @@ models:
 # Tab Autocomplete Model (schnell für Inline-Vorschläge)
 tabAutocompleteModel:
   name: coder
-  title: "Qwen Coder (Autocomplete)"
+  title: "Qwen 2.5 Coder (Autocomplete)"
   provider: ollama
   model: qwen2.5-coder:14b
   apiBase: "http://localhost:11434"

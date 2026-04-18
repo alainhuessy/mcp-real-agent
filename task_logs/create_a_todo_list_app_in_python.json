@@ -1,0 +1,57 @@
+{
+  "task_name": "create a todo list app in python",
+  "created_at": "2026-04-18T11:59:35.819156",
+  "todos": [
+    {
+      "id": 1,
+      "title": "1. Analyze requirements",
+      "description": "",
+      "status": "completed",
+      "created_at": "2026-04-18T11:59:35.820000",
+      "started_at": "2026-04-18T11:59:35.820289",
+      "completed_at": "2026-04-18T11:59:36.021566",
+      "error_message": null
+    },
+    {
+      "id": 2,
+      "title": "2. Create execution plan",
+      "description": "",
+      "status": "completed",
+      "created_at": "2026-04-18T11:59:36.023820",
+      "started_at": "2026-04-18T11:59:36.024104",
+      "completed_at": "2026-04-18T11:59:36.225408",
+      "error_message": null
+    },
+    {
+      "id": 3,
+      "title": "3. Execute task with LLM",
+      "description": "",
+      "status": "completed",
+      "created_at": "2026-04-18T11:59:36.227478",
+      "started_at": "2026-04-18T11:59:36.227736",
+      "completed_at": "2026-04-18T11:59:44.982830",
+      "error_message": null
+    },
+    {
+      "id": 4,
+      "title": "4. Verify & test result",
+      "description": "",
+      "status": "completed",
+      "created_at": "2026-04-18T11:59:44.984668",
+      "started_at": "2026-04-18T11:59:44.984911",
+      "completed_at": "2026-04-18T11:59:45.186067",
+      "error_message": null
+    }
+  ],
+  "summary": {
+    "task_name": "create a todo list app in python",
+    "total_todos": 4,
+    "completed": 4,
+    "in_progress": 0,
+    "failed": 0,
+    "blocked": 0,
+    "completion_percentage": 100,
+    "total_duration_seconds": 9.367776,
+    "status": "COMPLETE"
+  }
+}

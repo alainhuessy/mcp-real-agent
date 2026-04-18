@@ -1,0 +1,242 @@
+# Agent OS v2.1 — COMPLETE Model Configuration (ALL MODELS ACTIVATED)
+# RTX 3090 + CPU-Offload Optimiert
+# ALLE Modelle sind uncommented und bereit zum Testen!
+
+name: Agent OS v2.1 COMPLETE
+version: 2.3.0
+schema: v1
+
+# ============================================================================
+# 🚀 ALL MODELS ACTIVATED FOR TESTING
+# ============================================================================
+
+models:
+  # ════════════════════════════════════════════════════════════════════════════
+  # 🟢 BALANCED PROFILE (Recommended for Daily Work)
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  # ⭐ Primary Agent Model
+  # Use for: AGENT WORKFLOWS, MCP-Agent Tasks, Multi-Turn Conversations
+  # Speed: ⚡⚡⚡ (2-5 Sek)
+  # Quality: ⭐⭐⭐⭐⭐ (Perfect for Agents)
+  # Status: ✅ VERFÜGBAR (15 GB)
+  - name: agent  
+    title: "🟢 Devstral Small-2 24B (Agent Workflows) ⭐PRIMARY"
+    provider: ollama
+    model: devstral-small-2:24b
+    apiBase: "http://localhost:11434"
+    contextLength: 32000
+    
+  # Fallback: Quick Code Generation
+  # Use for: QUICK CODE GENERATION, Refactoring, Fast Iteration
+  # Speed: ⚡⚡⚡ (2-5 Sek)
+  # Quality: ⭐⭐⭐⭐ (Good for Code)
+  # Status: ✅ VERFÜGBAR (9 GB)
+  - name: coder
+    title: "⚡ Qwen 2.5 Coder 14B (Quick Code)"
+    provider: ollama
+    model: qwen2.5-coder:14b
+    apiBase: "http://localhost:11434"
+    contextLength: 28000
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 💪 POWER PROFILE (Highest Quality - Longer Inference)
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  # Power Agent - Best for Complex Tasks
+  # Use for: COMPLEX AGENTS, Multi-File Editing, Advanced Coding
+  # Speed: 🐢 (30-60 Sek with CPU-offload)
+  # Quality: ⭐⭐⭐⭐⭐ (State-of-Art Coding)
+  # Status: ✅ VERFÜGBAR (51 GB - needs CPU-offload)
+  - name: qwen-power
+    title: "💪 Qwen3-Coder-Next 51B (Power Agent)"
+    provider: ollama
+    model: qwen3-coder-next:latest
+    apiBase: "http://localhost:11434"
+    contextLength: 32000
+    
+  # MoE Reasoning Model - Best for Planning
+  # Use for: PLANNING, REASONING, Complex Logic, Multi-Step Tasks
+  # Speed: 🐢 (20-40 Sek)
+  # Quality: ⭐⭐⭐⭐⭐ (Excellent Reasoning)
+  # Status: ✅ VERFÜGBAR (24 GB - MoE, só 3B active)
+  - name: nemotron-reasoning
+    title: "🧠 Nemotron Cascade-2 (MoE Reasoning)"
+    provider: ollama
+    model: nemotron-cascade-2:latest
+    apiBase: "http://localhost:11434"
+    contextLength: 32000
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # ⚡ FAST PROFILE (Speed > Quality)
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  # Super Fast Code Generation
+  # Use for: QUICK DRAFTS, Tab-Autocomplete, Fast Iteration
+  # Speed: ⚡⚡⚡⚡ (1-2 Sek)
+  # Quality: ⭐⭐⭐ (Good enough for drafts)
+  # Status: ✅ VERFÜGBAR (7.1 GB)
+  - name: coder-fast
+    title: "⚡⚡ Mistral Nemo 7B (Super Fast Code)"
+    provider: ollama
+    model: mistral-nemo:latest
+    apiBase: "http://localhost:11434"
+    contextLength: 12000
+    
+  # Lightweight - Extremely Fast
+  # Use for: TAB-AUTOCOMPLETE, Light Chat, Minimal Tasks
+  # Speed: ⚡⚡⚡⚡⚡ (0.5-1 Sek)
+  # Quality: ⭐⭐ (Basic)
+  # Status: ✅ VERFÜGBAR (2.5 GB)
+  - name: phi-mini
+    title: "📱 Phi4 Mini (Lightweight)"
+    provider: ollama
+    model: phi4-mini:latest
+    apiBase: "http://localhost:11434"
+    contextLength: 8000
+    
+  # Chat Optimized
+  # Use for: CHAT, Conversations, Analysis, Writing
+  # Speed: ⚡⚡⚡⚡ (1-2 Sek)
+  # Quality: ⭐⭐⭐ (Good for chat)
+  # Status: ✅ VERFÜGBAR (4.1 GB)
+  - name: chat
+    title: "💬 Neural Chat (Chat Optimized)"
+    provider: ollama
+    model: neural-chat:latest
+    apiBase: "http://localhost:11434"
+    contextLength: 8000
+
+  # ════════════════════════════════════════════════════════════════════════════
+  # 🚀 FUTURE/EXPERIMENTAL (Uncomment when available)
+  # ════════════════════════════════════════════════════════════════════════════
+  
+  # TODO: GLM-5.1 (staatliche-der-Kunst für Agents - wird später verfügbar)
+  # Use for: AGENTIC ENGINEERING, State-of-Art Planning, Advanced Reasoning
+  # Speed: ? (TBD - werden wahrscheinlich langsam sein)
+  # Quality: ⭐⭐⭐⭐⭐ (Expected: State-of-Art)
+  # Status: ⏳ NICHT VERFÜGBAR - Später: ollama pull glm-5.1:latest
+  #
+  # - name: glm-agentic
+  #   title: "🚀 GLM-5.1 (State-of-Art Agents)"
+  #   provider: ollama
+  #   model: glm-5.1:latest
+  #   apiBase: "http://localhost:11434"
+  #   contextLength: 32000
+
+# ============================================================================
+# 📊 Tab Autocomplete Model (beim Tippen in Continue)
+# ============================================================================
+tabAutocompleteModel:
+  name: phi-mini
+  title: "Phi4 Mini (Fast Autocomplete)"
+  provider: ollama
+  model: phi4-mini:latest
+  apiBase: "http://localhost:11434"
+  contextLength: 2048
+
+# ============================================================================
+# 🔌 MCP Servers - Agent OS Integration
+# ============================================================================
+mcpServers:
+  - name: agent-os
+    title: "Agent OS v2.1 MCP Server"
+    command: ".venv/bin/python"
+    args: 
+      - "mcp_server.py"
+    cwd: "/mnt/6724D393605CE580/Linux/LJMProjekte/Github/mcp-real-agent"
+    # ✅ ALLE Modelle oben haben VOLLSTÄNDIGEN MCP-Zugriff!
+
+# ============================================================================
+# 💡 QUICK REFERENCE - Modell Auswahl Guide
+# ============================================================================
+
+# WÄHLE DAS RICHTIGE MODELL FÜR DEINE AUFGABE:
+#
+# 🤖 Für AGENT-TASKS (Multi-Step Workflows):
+#    → devstral-small-2:24b (PRIMARY - daily work)
+#    → qwen3-coder-next:51b (POWER - best quality)
+#    → glm-5.1 (FUTURE - wenn verfügbar)
+#
+# 💻 Für CODING (Regular Code Generation):
+#    → qwen2.5-coder:14b (FALLBACK - schnell)
+#    → coder-fast mistral-nemo (FAST - sehr schnell)
+#    → qwen3-coder-next:51b (POWER - beste Qualität)
+#
+# 🧠 Für PLANNING & REASONING (Complex Logic):
+#    → nemotron-cascade-2 (POWER - exzellent)
+#    → glm-5.1 (FUTURE - wenn verfügbar)
+#    → qwen3-coder-next:51b (POWER - auch gut)
+#
+# 💬 Für CHAT & Conversations:
+#    → neural-chat (FAST - chat-optimiert)
+#    → devstral-small-2 (BALANCED - gute Qualität)
+#    → phi-mini (FAST - lightweight)
+#
+# ⚡ Für SPEED (wenn Zeit zählt - Drafts):
+#    → mistral-nemo (FAST - super schnell)
+#    → phi-mini (FAST - extrem schnell)
+#    → qwen2.5-coder (BALANCED - schnell + gut)
+#
+# 🎯 Default für MCP-Agent:
+#    → Mode: AGENT
+#    → Model: agent (devstral-small-2:24b)
+#    → Diese Kombination ist optimiert für deine Use-Case!
+
+# ============================================================================
+# 📋 AKTIVIERUNGS-ANLEITUNG
+# ============================================================================
+
+# 1. KOPIERE diese Config als aktive Config:
+#    cd .continue/agents
+#    cp config-complete.yaml config.yaml
+#
+# 2. STARTE MCP-Server (Terminal 1):
+#    python mcp_server.py
+#
+# 3. STARTE Continue (Terminal 2):
+#    continue dev
+#
+# 4. WÄHLE in Continue:
+#    Mode: AGENT
+#    Model: agent (oder ein anderes - live wechselbar!)
+#
+# 5. TESTE:
+#    debug: Schreibe eine Python Fibonacci Funktion
+#    → Sollte MCP-Tools nutzen!
+#
+# 6. WECHSEL Modelle:
+#    In Continue → Model Selector rechts oben
+#    → Wechsel zwischen: agent, coder, qwen-power, chat, etc.
+#    → Keine Neustart nötig!
+
+# ============================================================================
+# 🔄 Modell-Vergleich für deine Workflow
+# ============================================================================
+
+# TÄGLICH (Performance ist wichtig):
+#   PRIMARY: devstral-small-2:24b
+#   FALLBACK: qwen2.5-coder:14b
+#   RESULT: 2-5 Sek, sehr gute Qualität
+#
+# INTENSIVE SESSIONS (Qualität > Speed):
+#   PRIMARY: qwen3-coder-next:51b
+#   FALLBACK: nemotron-cascade-2
+#   RESULT: 20-60 Sek, beste Qualität
+#
+# SCHNELLE TESTS (Speed > Quality):
+#   PRIMARY: mistral-nemo:7b
+#   FALLBACK: phi-mini:2.5b
+#   RESULT: 0.5-2 Sek, anständige Qualität
+
+# ============================================================================
+# 🎯 Status: READY FOR TESTING
+# ============================================================================
+# 
+# ✅ Alle verfügbaren Modelle: AKTIVIERT
+# ✅ MCP-Agent Integration: READY
+# ✅ Verwendungszwecke: MARKED
+# ⏳ GLM-5.1: Wird später verfügbar
+# 
+# 🚀 START TESTING NOW!
+# ============================================================================
