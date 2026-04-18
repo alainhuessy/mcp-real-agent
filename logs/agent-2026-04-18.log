@@ -162,3 +162,18 @@ TypeError: ReviewerAgent.review() missing 1 required positional argument: 'outpu
 [2026-04-18 17:02:14] [agent-os] [DEBUG] [WORKER] [2a1a74f4] Model: llama3.1:8b
 [2026-04-18 17:02:20] [agent-os] [DEBUG] [WORKER] [2a1a74f4] LLM response: 1867 chars
 [2026-04-18 17:02:20] [agent-os] [INFO] [WORKER] [2a1a74f4] Task completed successfully
+[2026-04-18 17:08:52] [agent-os] [INFO] [MCP_SERVER] Agent OS v2.1 MCP Server starting
+[2026-04-18 17:08:52] [agent-os] [INFO] [MCP_SERVER] 📌 Aktive Config beim Start: config-top-tier.yaml
+[2026-04-18 17:08:52] [agent-os] [DEBUG] [MCP_SERVER] Agent pipeline initialized
+[2026-04-18 17:09:17] [agent-os] [INFO] [MCP_SERVER] Agent OS v2.1 MCP Server starting
+[2026-04-18 17:09:17] [agent-os] [INFO] [MCP_SERVER] 📌 Aktive Config beim Start: config-top-tier.yaml
+[2026-04-18 17:09:17] [agent-os] [DEBUG] [MCP_SERVER] Agent pipeline initialized
+[2026-04-18 17:19:35] [agent-os] [INFO] [MCP_SERVER] Agent OS v2.1 MCP Server starting
+[2026-04-18 17:19:35] [agent-os] [INFO] [MCP_SERVER] 📌 Aktive Config beim Start: config-top-tier.yaml
+[2026-04-18 17:19:35] [agent-os] [DEBUG] [MCP_SERVER] Agent pipeline initialized
+[2026-04-18 17:20:50] [agent-os] [INFO] [MCP_SERVER] Agent OS v2.1 MCP Server starting
+[2026-04-18 17:20:50] [agent-os] [INFO] [MCP_SERVER] 📌 Aktive Config beim Start: config-rtx3090-optimized.yaml
+[2026-04-18 17:20:50] [agent-os] [DEBUG] [MCP_SERVER] Agent pipeline initialized
+[2026-04-18 17:21:01] [agent-os] [INFO] [MCP_SERVER] Agent OS v2.1 MCP Server starting
+[2026-04-18 17:21:01] [agent-os] [INFO] [MCP_SERVER] 📌 Aktive Config beim Start: config-rtx3090-optimized.yaml
+[2026-04-18 17:21:01] [agent-os] [DEBUG] [MCP_SERVER] Agent pipeline initialized

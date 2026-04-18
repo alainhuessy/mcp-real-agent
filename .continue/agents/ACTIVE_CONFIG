@@ -1,1 +1,16 @@
-config-top-tier.yaml
+# Agent OS v2.1 — Config Selector
+# ============================================================================
+# Uncomment die Config die du nutzen möchtest (alles andere muss kommentiert sein!)
+# Format: # = deaktiviert | ohne # = AKTIV
+# ============================================================================
+# Speichere die Datei → Reload passiert automatisch beim nächsten Tool-Zugriff!
+# ============================================================================
+
+# Default Configs (Startpunkte):
+# config.yaml
+
+# Optimierte Configs:
+# config-tool-use-optimized.yaml
+config-rtx3090-optimized.yaml
+# config-top-tier.yaml
+# config-complete.yaml

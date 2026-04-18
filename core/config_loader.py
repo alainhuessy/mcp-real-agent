@@ -55,22 +55,39 @@ class DynamicConfigLoader:
         """Bestimme welche Config aktiv sein soll.
         
         Priority:
-        1. Datei ".continue/agents/ACTIVE_CONFIG" (persistent)
+        1. ACTIVE_CONFIG Datei - erste nicht-kommentierte Zeile
         2. Environment Variable ACTIVE_CONFIG
         3. Symlink "active-config.yaml" (wenn vorhanden)
         4. Default: "config.yaml"
+        
+        Format ACTIVE_CONFIG:
+        # Kommentare und Leerzeilen werden ignoriert
+        config-tool-use-optimized.yaml  # ← Wird verwendet
+        # config-top-tier.yaml          # ← Ignoriert (kommentiert)
         """
-        # 1. Persistente Datei
+        # 1. Persistente Datei (mit Kommentar-Support)
         active_config_file = self.config_dir / "ACTIVE_CONFIG"
         if active_config_file.exists():
             try:
-                config_name = active_config_file.read_text().strip()
-                if config_name and (self.config_dir / config_name).exists():
-                    return config_name
+                content = active_config_file.read_text()
+                for line in content.split("\n"):
+                    # Strip whitespace
+                    line = line.strip()
+                    
+                    # Ignoriere Kommentare und Leerzeilen
+                    if not line or line.startswith("#"):
+                        continue
+                    
+                    # Erste gültige (nicht-kommentierte) Zeile
+                    config_path = self.config_dir / line
+                    if config_path.exists():
+                        return line
+                    # Sonst continue zu nächster Zeile
+                    
             except Exception:
                 pass
 
-        # 2. Environment Variable
+        # 2. Environment Variable (Fallback)
         if env_config := os.environ.get("ACTIVE_CONFIG"):
             return env_config
 
