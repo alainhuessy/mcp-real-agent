@@ -101,13 +101,13 @@ _TOOLS = [
     ),    
     Tool(
         name="agent_plan",
-        description="Break down a goal into clear, actionable subtasks using Agent OS workspace context. Use this to plan complex work before execution.",
+        description="Plan goal: break into subtasks using workspace context.",
         inputSchema={
             "type": "object",
             "properties": {
                 "goal": {
                     "type": "string",
-                    "description": "The goal to plan (e.g., 'Refactor the entire agent.py module'). Agent analyzes workspace and breaks into subtasks.",
+                    "description": "Goal to plan",
                 }
             },
             "required": ["goal"],
@@ -116,12 +116,12 @@ _TOOLS = [
     
     Tool(
         name="agent_review",
-        description="Review code or work for bugs, improvements, consistency, and quality. Use after code execution to verify quality.",
+        description="Review code for bugs, improvements, consistency.",
         inputSchema={
             "type": "object",
             "properties": {
-                "code": {"type": "string", "description": "The code/work to review"},
-                "task": {"type": "string", "description": "The original task context for reference"},
+                "code": {"type": "string", "description": "Code to review"},
+                "task": {"type": "string", "description": "Original task context"},
             },
             "required": ["code"],
         },
@@ -157,24 +157,24 @@ _TOOLS = [
     # ── Project Context Tools (Quick Overview)──
     Tool(
         name="project_info",
-        description="Get a quick overview of the Agent OS project structure, modules, and workspace status. Use this ONLY for initial exploration. For detailed inspection, use file_read and file_list.",
+        description="Get workspace structure overview: modules, files, status. Quick intelligence before file operations.",
         inputSchema={"type": "object", "properties": {}},
     ),
 
     Tool(
         name="project_summary",
-        description="Get a summary of the entire project structure and status. Use this to understand the overall architecture before diving into specific files.",
+        description="Get full project architecture summary. Use for understanding overall system design.",
         inputSchema={"type": "object", "properties": {}},
     ),
 
-    # ── File Tools ── (Primary Workspace Access)
+    # ── File Tools ── (PRIMARY Workspace Access)
     Tool(
         name="file_read",
-        description="Read file contents from the Agent OS workspace (core/, agents/, tools/, tasks/, api/). Use this to inspect module code, configuration, and documentation.",
+        description="Read any file in the workspace. Primary tool for reading code, config, documentation.",
         inputSchema={
             "type": "object",
             "properties": {
-                "path": {"type": "string", "description": "Relative file path in workspace (e.g., 'core/agent.py', 'agents/planner.py')"}
+                "path": {"type": "string", "description": "File path (e.g., 'core/agent.py', 'agents/planner.py', 'README.md')"}
             },
             "required": ["path"],
         },
@@ -182,12 +182,12 @@ _TOOLS = [
 
     Tool(
         name="file_write",
-        description="Write or create file in the Agent OS workspace. Use this to save new code, configurations, or documentation.",
+        description="Write or create any file in the workspace. Use for code modifications, new files, configurations.",
         inputSchema={
             "type": "object",
             "properties": {
                 "path": {"type": "string", "description": "File path in workspace"},
-                "content": {"type": "string", "description": "File content to write"},
+                "content": {"type": "string", "description": "File content"},
             },
             "required": ["path", "content"],
         },
@@ -195,11 +195,11 @@ _TOOLS = [
 
     Tool(
         name="file_list",
-        description="List directory contents within the Agent OS workspace. Use this to explore directory structure (core/, agents/, tools/, tasks/, api/, docs/).",
+        description="List contents of any directory in workspace. Use for exploring structure and finding files.",
         inputSchema={
             "type": "object",
             "properties": {
-                "path": {"type": "string", "description": "Directory path in workspace (default: current dir). Examples: 'core', 'agents', 'tools'"}
+                "path": {"type": "string", "description": "Directory path (e.g., 'core', 'agents', 'tools', '.')"}
             },
         },
     ),
@@ -207,11 +207,11 @@ _TOOLS = [
     # ── Shell Tools (Command Execution) ──
     Tool(
         name="shell_run",
-        description="Execute shell commands in the Agent OS workspace (e.g., 'python run.py', 'pip install package', 'git status'). Use for running tasks, installing dependencies, and system operations.",
+        description="Execute shell commands: run scripts, install packages, git operations, system tasks.",
         inputSchema={
             "type": "object",
             "properties": {
-                "command": {"type": "string", "description": "Shell command to execute (restricted to safe commands via whitelist)"}
+                "command": {"type": "string", "description": "Shell command (restricted to safe whitelist)"}
             },
             "required": ["command"],
         },
@@ -220,17 +220,17 @@ _TOOLS = [
     # ── Git Tools (Version Control) ──
     Tool(
         name="git_status",
-        description="Check git repository status in the Agent OS workspace. Shows modified files, staged changes, and branches.",
+        description="Check git status: modified files, staged changes, branches.",
         inputSchema={"type": "object", "properties": {}},
     ),
 
     Tool(
         name="git_commit",
-        description="Create a git commit in the Agent OS workspace with a custom message.",
+        description="Create git commit with message.",
         inputSchema={
             "type": "object",
             "properties": {
-                "message": {"type": "string", "description": "Commit message describing the changes"}
+                "message": {"type": "string", "description": "Commit message"}
             },
             "required": ["message"],
         },
@@ -238,11 +238,11 @@ _TOOLS = [
 
     Tool(
         name="git_log",
-        description="Show recent git commits in the Agent OS workspace to understand project history.",
+        description="Show recent git commits and history.",
         inputSchema={
             "type": "object",
             "properties": {
-                "count": {"type": "integer", "description": "Number of commits to show", "default": 5}
+                "count": {"type": "integer", "description": "Number of commits", "default": 5}
             },
         },
     ),
@@ -250,12 +250,12 @@ _TOOLS = [
     # ── Task Tools (Task Management) ──
     Tool(
         name="task_add",
-        description="Add a task to the Agent OS task queue for asynchronous processing. Use this to queue work without waiting for results.",
+        description="Add task to queue for execution.",
         inputSchema={
             "type": "object",
             "properties": {
-                "task": {"type": "string", "description": "Task description (e.g., 'Analyze codebase', 'Test function')"},
-                "priority": {"type": "integer", "description": "Priority (1-10, default 1 = low)", "default": 1},
+                "task": {"type": "string", "description": "Task description"},
+                "priority": {"type": "integer", "description": "Priority 1-10", "default": 1},
             },
             "required": ["task"],
         },
@@ -263,25 +263,25 @@ _TOOLS = [
 
     Tool(
         name="task_list",
-        description="List all pending tasks in the Agent OS queue with their status and priority.",
+        description="List all pending tasks in queue.",
         inputSchema={"type": "object", "properties": {}},
     ),
 
     Tool(
         name="task_next",
-        description="Execute the next pending task from the Agent OS queue and return results.",
+        description="Execute next pending task from queue.",
         inputSchema={"type": "object", "properties": {}},
     ),
 
     # ── Memory Tools (Persistent Storage) ──
     Tool(
         name="memory_save",
-        description="Save information to Agent OS persistent memory for later retrieval. Use to store findings, context, and analysis results.",
+        description="Save information to persistent memory storage.",
         inputSchema={
             "type": "object",
             "properties": {
-                "content": {"type": "string", "description": "Content to store in memory"},
-                "topic": {"type": "string", "description": "Topic/tag for retrieval (e.g., 'docstring_audit', 'model_performance')"},
+                "content": {"type": "string", "description": "Content to store"},
+                "topic": {"type": "string", "description": "Topic/tag for retrieval"},
             },
             "required": ["content", "topic"],
         },
@@ -290,13 +290,13 @@ _TOOLS = [
     # ── LLM Direct (Advanced) ──
     Tool(
         name="llm_ask",
-        description="Ask the Agent OS LLM directly with custom model selection. Use for complex reasoning tasks or specific model selection.",
+        description="Ask LLM directly with optional model selection.",
         inputSchema={
             "type": "object",
             "properties": {
-                "prompt": {"type": "string", "description": "Question/prompt to ask"},
-                "model": {"type": "string", "description": "Optional: Specific model name (e.g., 'qwen3.6', 'qwen2.5-coder')"},
-                "system": {"type": "string", "description": "Optional: Custom system prompt for specialized reasoning"},
+                "prompt": {"type": "string", "description": "Question/prompt"},
+                "model": {"type": "string", "description": "Optional: specific model"},
+                "system": {"type": "string", "description": "Optional: custom system prompt"},
             },
             "required": ["prompt"],
         },
@@ -305,7 +305,7 @@ _TOOLS = [
     # ── System Status ──
     Tool(
         name="agent_status",
-        description="Get Agent OS system status: available models, tools list, workspace status. Use to verify system health.",
+        description="Get system status: available models, tools, workspace info.",
         inputSchema={"type": "object", "properties": {}},
     ),
 ]

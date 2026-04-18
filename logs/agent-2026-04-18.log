@@ -118,3 +118,8 @@ TypeError: ReviewerAgent.review() missing 1 required positional argument: 'outpu
 [2026-04-18 15:23:56] [agent-os] [INFO] [MCP_SERVER] [aad1e001] Write file: core/tools.py
 [2026-04-18 15:23:59] [agent-os] [DEBUG] [MCP_SERVER] [78f79a80] Tool call: file_write
 [2026-04-18 15:23:59] [agent-os] [INFO] [MCP_SERVER] [78f79a80] Write file: core/__init__.py
+[2026-04-18 15:27:30] [agent-os] [DEBUG] [MCP_SERVER] [3ddef35a] Tool call: project_info
+[2026-04-18 15:27:31] [agent-os] [DEBUG] [MCP_SERVER] [c83702d4] Tool call: project_summary
+[2026-04-18 15:27:31] [agent-os] [DEBUG] [MCP_SERVER] [c83702d4] Get project summary
+[2026-04-18 15:27:43] [agent-os] [DEBUG] [MCP_SERVER] [ebdbf7c3] Tool call: file_list
+[2026-04-18 15:27:44] [agent-os] [DEBUG] [MCP_SERVER] [1480bdcb] Tool call: file_read
