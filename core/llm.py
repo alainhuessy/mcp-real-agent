@@ -1,105 +1,40 @@
 """Ollama LLM Connector — lokale Inference via Ollama REST API."""
 
 import requests
-import yaml
 from pathlib import Path
 from rich.console import Console
+
+from core.config_loader import DynamicConfigLoader
 
 console = Console()
 
 OLLAMA_URL = "http://localhost:11434/api/chat"
 
 # ============================================================================
-# 🎯 DYNAMISCH MODEL LOADING (aus config.yaml)
+# 🎯 DYNAMISCH MODEL LOADING (Hot Reload Support)
 # ============================================================================
-# Liest automatisch die Models aus Continue config.yaml
-# Kein Hardcoding mehr - immer synchronisiert!
+# Nutzt DynamicConfigLoader für:
+# - Automatische Config-Erkennung
+# - Wechsel zwischen Configs ohne Restart
+# - Environment Variable: ACTIVE_CONFIG
 # ============================================================================
 
-
-def load_models_from_config() -> dict:
-    """Lädt Models dynmaisch aus .continue/agents/config.yaml.
-    
-    Returns:
-        dict: MODELS mapping {mode: model_name}
-    
-    Fallback: Wenn config.yaml nicht gefunden, nutzt Defaults
-    """
-    # 1. Versuche relative Path (Project-lokal)
-    config_path = Path(__file__).parent.parent / ".continue" / "agents" / "config.yaml"
-    
-    if config_path.exists():
-        console.print(f"[green]✅[/green] Config found (relative): {config_path}")
-    else:
-        # 2. Versuche Home directory
-        config_path = Path.home() / ".continue" / "agents" / "config.yaml"
-        if config_path.exists():
-            console.print(f"[green]✅[/green] Config found (home): {config_path}")
-        else:
-            # 3. Versuche absolute Pfade (Linux)
-            alt_paths = [
-                Path("/mnt/6724D393605CE580/Linux/LLM_Projekte/Github/mcp-real-agent/.continue/agents/config.yaml"),
-                Path("/mnt/6724D393605CE580/Linux/LJMProjekte/Github/mcp-real-agent/.continue/agents/config.yaml"),
-            ]
-            
-            found = False
-            for alt_path in alt_paths:
-                if alt_path.exists():
-                    config_path = alt_path
-                    console.print(f"[green]✅[/green] Config found (absolute): {config_path}")
-                    found = True
-                    break
-            
-            if not found:
-                console.print("[yellow]⚠️  config.yaml nicht gefunden[/yellow]")
-                console.print("[yellow]Nutze Fallback-Models...[/yellow]")
-                return _get_default_models()
-    
-    # Wenn IMMER NOCH nicht gefunden, nutze Defaults
-    if not config_path.exists():
-        console.print(f"[yellow]⚠️  config.yaml nicht gefunden ({config_path})[/yellow]")
-        console.print("[yellow]Nutze Fallback-Models...[/yellow]")
-        return _get_default_models()
-    
-    try:
-        with open(config_path, 'r', encoding='utf-8') as f:
-            config = yaml.safe_load(f)
-        
-        # Extrahiere Models aus YAML
-        models_list = config.get('models', [])
-        models_dict = {}
-        
-        for model_entry in models_list:
-            if isinstance(model_entry, dict) and 'name' in model_entry and 'model' in model_entry:
-                name = model_entry['name']
-                model_name = model_entry['model']
-                models_dict[name] = model_name
-                console.print(f"[green]✅[/green] Model geladen: {name} → {model_name}")
-        
-        if not models_dict:
-            console.print("[yellow]⚠️  Keine Models in config.yaml gefunden[/yellow]")
-            return _get_default_models()
-        
-        return models_dict
-    
-    except Exception as e:
-        console.print(f"[red]❌ Fehler beim Lesen von config.yaml: {e}[/red]")
-        return _get_default_models()
-
-
-def _get_default_models() -> dict:
-    """Fallback Models wenn keine config.yaml vorhanden."""
-    return {
-        "agent": "devstral-rtx3090:latest",           # PRIMARY
-        "coder": "qwen2.5-coder:14b",                 # FALLBACK
-        "planner": "devstral-small-2:24b",            # PLANNING
-        "rag": "devstral-small-2:24b",                # RAG/REASONING
-        "chat": "devstral-rtx3090:latest",            # CHAT
-    }
-
+# Initialize DynamicConfigLoader
+config_dir = Path(__file__).parent.parent / ".continue" / "agents"
+CONFIG_LOADER = DynamicConfigLoader(config_dir)
 
 # Load Models beim Start
-MODELS = load_models_from_config()
+MODELS = CONFIG_LOADER.load_config()
+
+if not MODELS:
+    console.print("[yellow]⚠️  Nutze Fallback-Models[/yellow]")
+    MODELS = {
+        "agent": "llama3-groq-tool-use:8b",
+        "coder": "qwen3-coder:30b",
+        "planner": "qwen3-coder:30b",
+        "rag": "qwen3-coder:30b",
+        "chat": "llama3-groq-tool-use:8b",
+    }
 
 
 class LLM:

@@ -2,12 +2,18 @@
 """
 Agent OS v2.1 — MCP Server (FIXED Version).
 Behebt das "Invalid request parameters" Problem durch korrekte Handler-Registrierung.
+
+Features:
+- Hot Reload: Wechsle zwischen Configs ohne Restart
+- Environment Variable: ACTIVE_CONFIG controls die aktive Config
+- CLI Tool: config-switch.py zum Verwalten von Configs
 """
 
 import asyncio
 import json
 import sys
 import logging
+from pathlib import Path
 from typing import Any
 
 from mcp.server import Server
@@ -18,7 +24,7 @@ from mcp.types import (
     CallToolResult,
 )
 
-from core.llm import LLM, MODELS
+from core.llm import LLM, CONFIG_LOADER
 from core.router import Router
 from core.logger import log_info, log_debug, log_error
 from memory.memory import Memory
@@ -51,6 +57,24 @@ _response_cache = {}
 # ── Iteration Limit System (verhindert Loop-Probleme) ──
 _tool_call_count = {}  # {tool_hash: count}
 _MAX_ITERATIONS_PER_SESSION = 2  # Nach 2 Aufrufen: Hard Stop
+
+# ── Config Hot-Reload (Automatischer Wechsel ohne Restart) ──
+_last_active_config = CONFIG_LOADER.get_active_config_name()
+log_info("MCP_SERVER", f"📌 Aktive Config beim Start: {_last_active_config}")
+
+def _check_config_reload():
+    """Prüfe ob Config gewechselt wurde und lade neu (Hot Reload)."""
+    global _last_active_config
+    
+    current_active = CONFIG_LOADER.get_active_config_name()
+    
+    if _last_active_config != current_active:
+        log_info("MCP_SERVER", f"🔄 Config gewechselt: {_last_active_config} → {current_active}")
+        models = CONFIG_LOADER.load_config()
+        _last_active_config = current_active
+        return True
+    
+    return False
 
 def _make_tool_key(name: str, arguments: dict) -> str:
     """Erzeuge eindeutigen Schlüssel für Tool-Aufruf."""
@@ -152,6 +176,34 @@ _TOOLS = [
             },
             "required": ["content", "topic"],
         },
+    ),
+
+    # ── Config Management Tools (Hot Reload) ──
+    Tool(
+        name="config_list",
+        description="[Agent OS] List all available Continue config files (.continue/agents/config*.yaml).",
+        inputSchema={"type": "object", "properties": {}},
+    ),
+
+    Tool(
+        name="config_switch",
+        description="[Agent OS] Switch to a different config file. Hot reload: no restart needed.",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "config_name": {
+                    "type": "string",
+                    "description": "Config file name (e.g., 'config-top-tier.yaml')"
+                }
+            },
+            "required": ["config_name"],
+        },
+    ),
+
+    Tool(
+        name="config_current",
+        description="[Agent OS] Show current config and active models.",
+        inputSchema={"type": "object", "properties": {}},
     ),
 
     # ── Project Context Tools ──
@@ -317,10 +369,14 @@ def _execute_tool(name: str, arguments: dict[str, Any]) -> str:
     """Führe ein Tool aus mit Iteration Limit & Completion Signals.
     
     Features:
+    - Hot Reload: Prüfet bei jedem Aufruf ob Config gewechselt wurde
     - Tracks each tool call for loop detection
     - Returns completion signals after max iterations
     - Prevents infinite Continue-Chat loops
     """
+    
+    # 🔄 HOT RELOAD CHECK (Automatischer Config-Wechsel erkennen)
+    _check_config_reload()
     
     import hashlib
     tool_id = hashlib.md5(f"{name}{str(arguments)}".encode()).hexdigest()[:8]
@@ -428,6 +484,35 @@ def _execute_tool(name: str, arguments: dict[str, Any]) -> str:
             log_info("MCP_SERVER", f"[{tool_id}] Memory save: {topic}")
             memory.sync(content, topic)
             return f"✅ Saved to memory: {topic}"
+
+        # ── Config Management (Hot Reload) ──
+        if name == "config_list":
+            log_debug("MCP_SERVER", f"[{tool_id}] List available configs")
+            configs = CONFIG_LOADER.get_available_configs()
+            active = CONFIG_LOADER.get_active_config_name()
+            result = f"Active: {active}\n\nAvailable:\n"
+            result += "\n".join([f"  - {c}" for c in configs])
+            return result
+
+        if name == "config_switch":
+            config_name = args["config_name"]
+            log_info("MCP_SERVER", f"[{tool_id}] Switch config: {config_name}")
+            success = CONFIG_LOADER.switch_config(config_name)
+            if success:
+                models = CONFIG_LOADER.load_config()
+                result = f"✅ Config switched to: {config_name}\n\nModels:\n"
+                result += "\n".join([f"  {m}: {n}" for m, n in models.items()])
+                return result
+            else:
+                return f"❌ Failed to switch config: {config_name}"
+
+        if name == "config_current":
+            log_debug("MCP_SERVER", f"[{tool_id}] Get current config")
+            active = CONFIG_LOADER.get_active_config_name()
+            models = CONFIG_LOADER.load_config()
+            result = f"Active Config: {active}\n\nModels:\n"
+            result += "\n".join([f"  {m}: {n}" for m, n in models.items()])
+            return result
 
         # ── Project ──
         if name == "project_info":
