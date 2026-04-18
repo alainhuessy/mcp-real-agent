@@ -123,3 +123,34 @@ TypeError: ReviewerAgent.review() missing 1 required positional argument: 'outpu
 [2026-04-18 15:27:31] [agent-os] [DEBUG] [MCP_SERVER] [c83702d4] Get project summary
 [2026-04-18 15:27:43] [agent-os] [DEBUG] [MCP_SERVER] [ebdbf7c3] Tool call: file_list
 [2026-04-18 15:27:44] [agent-os] [DEBUG] [MCP_SERVER] [1480bdcb] Tool call: file_read
+[2026-04-18 15:37:16] [agent-os] [DEBUG] [MCP_SERVER] [3ddef35a] Tool call: project_info
+[2026-04-18 15:38:43] [agent-os] [INFO] [MCP_SERVER] Agent OS v2.1 MCP Server starting
+[2026-04-18 15:38:43] [agent-os] [DEBUG] [MCP_SERVER] Agent pipeline initialized
+[2026-04-18 15:38:59] [agent-os] [DEBUG] [MCP_SERVER] [3ddef35a] Tool call: project_info
+[2026-04-18 15:38:59] [agent-os] [DEBUG] [MCP_SERVER] [3ddef35a] Get project info
+[2026-04-18 15:39:00] [agent-os] [DEBUG] [MCP_SERVER] [ebdbf7c3] Tool call: file_list
+[2026-04-18 15:39:00] [agent-os] [DEBUG] [MCP_SERVER] [ebdbf7c3] List dir: core
+[2026-04-18 15:39:02] [agent-os] [DEBUG] [MCP_SERVER] [d4fc331d] Tool call: file_read
+[2026-04-18 15:39:02] [agent-os] [DEBUG] [MCP_SERVER] [d4fc331d] Read file: core/__init__.py
+[2026-04-18 15:39:03] [agent-os] [DEBUG] [MCP_SERVER] [1480bdcb] Tool call: file_read
+[2026-04-18 15:39:03] [agent-os] [DEBUG] [MCP_SERVER] [1480bdcb] Read file: core/agent.py
+[2026-04-18 15:39:05] [agent-os] [DEBUG] [MCP_SERVER] [46c51abd] Tool call: file_read
+[2026-04-18 15:39:05] [agent-os] [DEBUG] [MCP_SERVER] [46c51abd] Read file: core/llm.py
+[2026-04-18 15:39:07] [agent-os] [DEBUG] [MCP_SERVER] [2d943e91] Tool call: file_read
+[2026-04-18 15:39:07] [agent-os] [DEBUG] [MCP_SERVER] [2d943e91] Read file: core/logger.py
+[2026-04-18 15:39:09] [agent-os] [DEBUG] [MCP_SERVER] [78752c08] Tool call: file_read
+[2026-04-18 15:39:09] [agent-os] [DEBUG] [MCP_SERVER] [78752c08] Read file: core/router.py
+[2026-04-18 15:39:10] [agent-os] [DEBUG] [MCP_SERVER] [8d5491b0] Tool call: file_read
+[2026-04-18 15:39:10] [agent-os] [DEBUG] [MCP_SERVER] [8d5491b0] Read file: core/tools.py
+[2026-04-18 15:45:05] [agent-os] [DEBUG] [MCP_SERVER] [ebdbf7c3] Tool call: file_list
+[2026-04-18 15:45:05] [agent-os] [DEBUG] [MCP_SERVER] [ebdbf7c3] List dir: core
+[2026-04-18 15:45:13] [agent-os] [DEBUG] [MCP_SERVER] [d4fc331d] Tool call: file_read
+[2026-04-18 15:45:13] [agent-os] [DEBUG] [MCP_SERVER] [d4fc331d] Read file: core/__init__.py
+[2026-04-18 15:45:20] [agent-os] [DEBUG] [MCP_SERVER] [1480bdcb] Tool call: file_read
+[2026-04-18 15:45:20] [agent-os] [DEBUG] [MCP_SERVER] [1480bdcb] Read file: core/agent.py
+[2026-04-18 15:45:28] [agent-os] [DEBUG] [MCP_SERVER] [46c51abd] Tool call: file_read
+[2026-04-18 15:45:28] [agent-os] [DEBUG] [MCP_SERVER] [46c51abd] Read file: core/llm.py
+[2026-04-18 15:45:37] [agent-os] [DEBUG] [MCP_SERVER] [78752c08] Tool call: file_read
+[2026-04-18 15:45:37] [agent-os] [DEBUG] [MCP_SERVER] [78752c08] Read file: core/router.py
+[2026-04-18 15:45:57] [agent-os] [INFO] [MCP_SERVER] Agent OS v2.1 MCP Server starting
+[2026-04-18 15:45:57] [agent-os] [DEBUG] [MCP_SERVER] Agent pipeline initialized

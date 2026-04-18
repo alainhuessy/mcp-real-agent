@@ -172,9 +172,9 @@ class AgentOS:
             task["status"] = "running"
 
             try:
-                result = self.run_task(task["task"])
+                self.run_task(task["task"])
                 self.tasks.complete(task)
-                console.print(f"[green]✅ Done[/green]")
+                console.print("[green]✅ Done[/green]")
             except Exception as e:
                 self.tasks.fail(task, str(e))
                 console.print(f"[red]❌ Failed: {e}[/red]")

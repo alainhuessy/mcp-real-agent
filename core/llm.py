@@ -2,7 +2,6 @@
 
 import requests
 import yaml
-import os
 from pathlib import Path
 from rich.console import Console
 
@@ -16,6 +15,7 @@ OLLAMA_URL = "http://localhost:11434/api/chat"
 # Liest automatisch die Models aus Continue config.yaml
 # Kein Hardcoding mehr - immer synchronisiert!
 # ============================================================================
+
 
 def load_models_from_config() -> dict:
     """Lädt Models dynmaisch aus .continue/agents/config.yaml.
@@ -51,7 +51,7 @@ def load_models_from_config() -> dict:
                     break
             
             if not found:
-                console.print(f"[yellow]⚠️  config.yaml nicht gefunden[/yellow]")
+                console.print("[yellow]⚠️  config.yaml nicht gefunden[/yellow]")
                 console.print("[yellow]Nutze Fallback-Models...[/yellow]")
                 return _get_default_models()
     
