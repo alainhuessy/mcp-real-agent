@@ -154,3 +154,11 @@ TypeError: ReviewerAgent.review() missing 1 required positional argument: 'outpu
 [2026-04-18 15:45:37] [agent-os] [DEBUG] [MCP_SERVER] [78752c08] Read file: core/router.py
 [2026-04-18 15:45:57] [agent-os] [INFO] [MCP_SERVER] Agent OS v2.1 MCP Server starting
 [2026-04-18 15:45:57] [agent-os] [DEBUG] [MCP_SERVER] Agent pipeline initialized
+[2026-04-18 16:59:55] [agent-os] [INFO] [MCP_SERVER] Agent OS v2.1 MCP Server starting
+[2026-04-18 16:59:55] [agent-os] [INFO] [MCP_SERVER] 📌 Aktive Config beim Start: config.yaml
+[2026-04-18 16:59:55] [agent-os] [DEBUG] [MCP_SERVER] Agent pipeline initialized
+[2026-04-18 17:02:14] [agent-os] [INFO] [WORKER] [2a1a74f4] Execute task: python config-switch.py switch config-top-tier.yam...
+[2026-04-18 17:02:14] [agent-os] [DEBUG] [WORKER] [2a1a74f4] Router mode: chat
+[2026-04-18 17:02:14] [agent-os] [DEBUG] [WORKER] [2a1a74f4] Model: llama3.1:8b
+[2026-04-18 17:02:20] [agent-os] [DEBUG] [WORKER] [2a1a74f4] LLM response: 1867 chars
+[2026-04-18 17:02:20] [agent-os] [INFO] [WORKER] [2a1a74f4] Task completed successfully

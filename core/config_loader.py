@@ -55,20 +55,31 @@ class DynamicConfigLoader:
         """Bestimme welche Config aktiv sein soll.
         
         Priority:
-        1. Environment Variable ACTIVE_CONFIG
-        2. Symlink "active-config.yaml" (wenn vorhanden)
-        3. Default: "config.yaml"
+        1. Datei ".continue/agents/ACTIVE_CONFIG" (persistent)
+        2. Environment Variable ACTIVE_CONFIG
+        3. Symlink "active-config.yaml" (wenn vorhanden)
+        4. Default: "config.yaml"
         """
-        # 1. Environment Variable
+        # 1. Persistente Datei
+        active_config_file = self.config_dir / "ACTIVE_CONFIG"
+        if active_config_file.exists():
+            try:
+                config_name = active_config_file.read_text().strip()
+                if config_name and (self.config_dir / config_name).exists():
+                    return config_name
+            except Exception:
+                pass
+
+        # 2. Environment Variable
         if env_config := os.environ.get("ACTIVE_CONFIG"):
             return env_config
 
-        # 2. Symlink
+        # 3. Symlink
         symlink_path = self.config_dir / "active-config.yaml"
         if symlink_path.is_symlink():
             return symlink_path.resolve().name
 
-        # 3. Default
+        # 4. Default
         return "config.yaml"
 
     def load_config(self) -> Dict[str, str]:
@@ -85,6 +96,10 @@ class DynamicConfigLoader:
                 f"[red]❌ Config nicht gefunden: {config_path}[/red]"
             )
             return {}
+
+        # 🔄 DEBUG: Log welche Config geladen wird
+        if self.current_config_file != config_path:
+            console.print(f"[cyan]🔄 Lade Config: {active_name}[/cyan]")
 
         # Prüfe auf Änderungen (Hot Reload)
         try:
@@ -132,7 +147,7 @@ class DynamicConfigLoader:
             return {}
 
     def switch_config(self, config_name: str) -> bool:
-        """Wechsle zu einer anderen Config.
+        """Wechsle zu einer anderen Config (persistent über Neustarts).
         
         Args:
             config_name: Name der Config (z.B. "config-top-tier.yaml")
@@ -148,13 +163,24 @@ class DynamicConfigLoader:
             )
             return False
 
-        # Setze Environment Variable
+        # 1. Schreibe zu Datei (persistent!)
+        active_config_file = self.config_dir / "ACTIVE_CONFIG"
+        try:
+            active_config_file.write_text(config_name)
+            console.print(
+                f"[green]✅ ACTIVE_CONFIG DATEI gespeichert:[/green] {config_name}"
+            )
+        except Exception as e:
+            console.print(f"[red]❌ Fehler beim Speichern: {e}[/red]")
+            return False
+
+        # 2. Setze auch Environment Variable (für aktuellen Prozess)
         os.environ["ACTIVE_CONFIG"] = config_name
         console.print(
-            f"[green]✅ ACTIVE_CONFIG gesetzt auf:[/green] {config_name}"
+            f"[green]✅ ACTIVE_CONFIG VARIABLE gesetzt:[/green] {config_name}"
         )
 
-        # Lade neue Config
+        # 3. Lade neue Config sofort
         self.last_modified = None  # Force reload
         self.load_config()
         return True

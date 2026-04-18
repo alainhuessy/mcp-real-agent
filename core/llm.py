@@ -23,18 +23,40 @@ OLLAMA_URL = "http://localhost:11434/api/chat"
 config_dir = Path(__file__).parent.parent / ".continue" / "agents"
 CONFIG_LOADER = DynamicConfigLoader(config_dir)
 
-# Load Models beim Start
-MODELS = CONFIG_LOADER.load_config()
+# ============================================================================
+# 🎯 DYNAMISCH MODEL LOADING (Hot Reload Support)
+# ============================================================================
+# Nutzt DynamicConfigLoader für:
+# - Automatische Config-Erkennung
+# - Wechsel zwischen Configs ohne Restart
+# - Persistente Speicherung in .continue/agents/ACTIVE_CONFIG
+# ============================================================================
 
-if not MODELS:
-    console.print("[yellow]⚠️  Nutze Fallback-Models[/yellow]")
-    MODELS = {
+# Initialize DynamicConfigLoader
+config_dir = Path(__file__).parent.parent / ".continue" / "agents"
+CONFIG_LOADER = DynamicConfigLoader(config_dir)
+
+# Initialisiere Models beim Modul-Import (wird aber bei jedem Zugriff neu geladen)
+_INITIAL_MODELS = CONFIG_LOADER.load_config()
+
+
+def get_models() -> dict:
+    """Hole aktualisierte Models von der aktiven Config.
+    
+    Diese Funktion lädt die Config bei jedem Aufruf neu,
+    um sicherzustellen, dass Wechsel erkannt werden.
+    """
+    return CONFIG_LOADER.load_config() or _INITIAL_MODELS or {
         "agent": "llama3-groq-tool-use:8b",
         "coder": "qwen3-coder:30b",
         "planner": "qwen3-coder:30b",
         "rag": "qwen3-coder:30b",
         "chat": "llama3-groq-tool-use:8b",
     }
+
+
+# Für Backward Compatibility
+MODELS = _INITIAL_MODELS
 
 
 class LLM:
@@ -71,5 +93,6 @@ class LLM:
             return f"ERROR: {e}"
 
     def get_model(self, mode: str) -> str:
-        """Gibt das passende Modell für einen Modus zurück."""
-        return MODELS.get(mode, MODELS["chat"])
+        """Gibt das passende Modell für einen Modus zurück (aktualisiert dynamisch)."""
+        models = get_models()  # Hole aktuelle Models mit Hot Reload
+        return models.get(mode, models.get("chat", "llama3-groq-tool-use:8b"))

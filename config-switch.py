@@ -141,10 +141,13 @@ def switch_config(config_loader: DynamicConfigLoader, config_name: str):
     
     if success:
         console.print()
-        console.print(
-            "[bold cyan]💡 Tipp:[/bold cyan] Starten Sie den MCP-Server neu für die Änderungen:"
-        )
-        console.print("  [yellow]python mcp_server.py[/yellow]")
+        console.print("[bold green]✅ Config dauerhaft gespeichert![/bold green]")
+        console.print()
+        console.print("[bold cyan]💡 Hot Reload aktiviert:[/bold cyan]")
+        console.print("  • Config-Wechsel wird beim nächsten Tool-Zugriff erkannt")
+        console.print("  • Kein Server-Restart erforderlich für normale Nutzung")
+        console.print("  • Optional: Das API-System neu starten für sofort Update:")
+        console.print("    [yellow]python run.py[/yellow]")
         console.print()
         show_models(config_loader)
 
