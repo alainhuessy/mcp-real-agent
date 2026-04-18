@@ -130,7 +130,7 @@ _TOOLS = [
     # ── Memory Tools ──
     Tool(
         name="memory_search",
-        description="Search project memory for past solutions and context.",
+        description="[Agent OS] Search Agent OS memory for past solutions and context.",
         inputSchema={
             "type": "object",
             "properties": {
@@ -143,7 +143,7 @@ _TOOLS = [
 
     Tool(
         name="memory_save",
-        description="Save information to project memory.",
+        description="[Agent OS] Save solutions and context to Agent OS memory.",
         inputSchema={
             "type": "object",
             "properties": {
@@ -157,20 +157,20 @@ _TOOLS = [
     # ── Project Context Tools ──
     Tool(
         name="project_info",
-        description="Get workspace overview: project structure, modules, and status.",
+        description="[Agent OS] Get Agent OS workspace overview: structure, modules, configuration.",
         inputSchema={"type": "object", "properties": {}},
     ),
 
     Tool(
         name="project_summary",
-        description="Get project architecture summary and analysis.",
+        description="[Agent OS] Get Agent OS project architecture analysis, tech stack, design patterns.",
         inputSchema={"type": "object", "properties": {}},
     ),
 
     # ── File Tools ── (PRIMARY Workspace Access)
     Tool(
         name="file_read",
-        description="Read file contents. Auto-truncates files >100KB. Shows file size for context.",
+        description="[Agent OS] Read workspace files. Auto-truncates large files (>100KB).",
         inputSchema={
             "type": "object",
             "properties": {
@@ -182,7 +182,7 @@ _TOOLS = [
 
     Tool(
         name="file_write",
-        description="Write or create files in workspace. Save code changes and new files.",
+        description="[Agent OS] Write files to workspace. Create or modify code and configs.",
         inputSchema={
             "type": "object",
             "properties": {
@@ -195,7 +195,7 @@ _TOOLS = [
 
     Tool(
         name="file_list",
-        description="List directory with file/folder icons and sizes (📁/📄). Helps navigate workspace structure.",
+        description="[Agent OS] List workspace directories with 📁📄 icons and file sizes.",
         inputSchema={
             "type": "object",
             "properties": {
@@ -207,7 +207,7 @@ _TOOLS = [
     # ── Shell Tools ──
     Tool(
         name="shell_run",
-        description="Execute shell commands. Run scripts, tests, install packages.",
+        description="[Agent OS] Execute shell commands in workspace (python, git, npm).",
         inputSchema={
             "type": "object",
             "properties": {
@@ -220,13 +220,13 @@ _TOOLS = [
     # ── Git Tools ──
     Tool(
         name="git_status",
-        description="Check git repository status. See modified files and branches.",
+        description="[Agent OS] Check workspace git status, branches, changes.",
         inputSchema={"type": "object", "properties": {}},
     ),
 
     Tool(
         name="git_commit",
-        description="Create git commit with message.",
+        description="[Agent OS] Create git commits in workspace.",
         inputSchema={
             "type": "object",
             "properties": {
@@ -238,7 +238,7 @@ _TOOLS = [
 
     Tool(
         name="git_log",
-        description="Show recent git commits and project history.",
+        description="[Agent OS] View workspace git history.",
         inputSchema={
             "type": "object",
             "properties": {
@@ -250,7 +250,7 @@ _TOOLS = [
     # ── Task Tools ──
     Tool(
         name="task_add",
-        description="Add task to queue for execution.",
+        description="[Agent OS] Add task to Agent OS queue.",
         inputSchema={
             "type": "object",
             "properties": {
@@ -263,13 +263,13 @@ _TOOLS = [
 
     Tool(
         name="task_list",
-        description="List pending tasks in queue.",
+        description="[Agent OS] List pending Agent OS tasks.",
         inputSchema={"type": "object", "properties": {}},
     ),
 
     Tool(
         name="task_next",
-        description="Execute next pending task from queue.",
+        description="[Agent OS] Get next pending Agent OS task.",
         inputSchema={"type": "object", "properties": {}},
     ),
 
@@ -290,7 +290,7 @@ _TOOLS = [
     # ── LLM Direct ──
     Tool(
         name="llm_ask",
-        description="Ask LLM directly with optional model selection.",
+        description="[Agent OS] Direct LLM query with optional model selection.",
         inputSchema={
             "type": "object",
             "properties": {
@@ -305,7 +305,7 @@ _TOOLS = [
     # ── System ──
     Tool(
         name="agent_status",
-        description="Get system status: available models, tools, workspace info.",
+        description="[Agent OS] Get system status, models, tools, workspace info.",
         inputSchema={"type": "object", "properties": {}},
     ),
 ]
