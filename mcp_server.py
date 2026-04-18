@@ -116,12 +116,12 @@ _TOOLS = [
     
     Tool(
         name="agent_review",
-        description="Review code for bugs, improvements, consistency.",
+        description="Review code for bugs, improvements, and consistency.",
         inputSchema={
             "type": "object",
             "properties": {
                 "code": {"type": "string", "description": "Code to review"},
-                "task": {"type": "string", "description": "Original task context"},
+                "task": {"type": "string", "description": "Original task"},
             },
             "required": ["code"],
         },
@@ -154,27 +154,27 @@ _TOOLS = [
         },
     ),
 
-    # ── Project Context Tools (Quick Overview)──
+    # ── Project Context Tools ──
     Tool(
         name="project_info",
-        description="Get workspace structure overview: modules, files, status. Quick intelligence before file operations.",
+        description="Get workspace overview: project structure, modules, and status.",
         inputSchema={"type": "object", "properties": {}},
     ),
 
     Tool(
         name="project_summary",
-        description="Get full project architecture summary. Use for understanding overall system design.",
+        description="Get project architecture summary and analysis.",
         inputSchema={"type": "object", "properties": {}},
     ),
 
     # ── File Tools ── (PRIMARY Workspace Access)
     Tool(
         name="file_read",
-        description="Read any file in the workspace. Primary tool for reading code, config, documentation.",
+        description="Read file contents from workspace. Access code, config, documentation files.",
         inputSchema={
             "type": "object",
             "properties": {
-                "path": {"type": "string", "description": "File path (e.g., 'core/agent.py', 'agents/planner.py', 'README.md')"}
+                "path": {"type": "string", "description": "File path in workspace (e.g., 'core/agent.py')"}
             },
             "required": ["path"],
         },
@@ -182,11 +182,11 @@ _TOOLS = [
 
     Tool(
         name="file_write",
-        description="Write or create any file in the workspace. Use for code modifications, new files, configurations.",
+        description="Write or create files in workspace. Save code changes and new files.",
         inputSchema={
             "type": "object",
             "properties": {
-                "path": {"type": "string", "description": "File path in workspace"},
+                "path": {"type": "string", "description": "File path"},
                 "content": {"type": "string", "description": "File content"},
             },
             "required": ["path", "content"],
@@ -195,32 +195,32 @@ _TOOLS = [
 
     Tool(
         name="file_list",
-        description="List contents of any directory in workspace. Use for exploring structure and finding files.",
+        description="List directory contents in workspace. Explore project structure and find files.",
         inputSchema={
             "type": "object",
             "properties": {
-                "path": {"type": "string", "description": "Directory path (e.g., 'core', 'agents', 'tools', '.')"}
+                "path": {"type": "string", "description": "Directory path (e.g., 'core')"}
             },
         },
     ),
 
-    # ── Shell Tools (Command Execution) ──
+    # ── Shell Tools ──
     Tool(
         name="shell_run",
-        description="Execute shell commands: run scripts, install packages, git operations, system tasks.",
+        description="Execute shell commands. Run scripts, tests, install packages.",
         inputSchema={
             "type": "object",
             "properties": {
-                "command": {"type": "string", "description": "Shell command (restricted to safe whitelist)"}
+                "command": {"type": "string", "description": "Shell command (safe commands only)"}
             },
             "required": ["command"],
         },
     ),
 
-    # ── Git Tools (Version Control) ──
+    # ── Git Tools ──
     Tool(
         name="git_status",
-        description="Check git status: modified files, staged changes, branches.",
+        description="Check git repository status. See modified files and branches.",
         inputSchema={"type": "object", "properties": {}},
     ),
 
@@ -238,7 +238,7 @@ _TOOLS = [
 
     Tool(
         name="git_log",
-        description="Show recent git commits and history.",
+        description="Show recent git commits and project history.",
         inputSchema={
             "type": "object",
             "properties": {
@@ -247,7 +247,7 @@ _TOOLS = [
         },
     ),
 
-    # ── Task Tools (Task Management) ──
+    # ── Task Tools ──
     Tool(
         name="task_add",
         description="Add task to queue for execution.",
@@ -263,7 +263,7 @@ _TOOLS = [
 
     Tool(
         name="task_list",
-        description="List all pending tasks in queue.",
+        description="List pending tasks in queue.",
         inputSchema={"type": "object", "properties": {}},
     ),
 
@@ -273,10 +273,10 @@ _TOOLS = [
         inputSchema={"type": "object", "properties": {}},
     ),
 
-    # ── Memory Tools (Persistent Storage) ──
+    # ── Memory Tools ──
     Tool(
         name="memory_save",
-        description="Save information to persistent memory storage.",
+        description="Save information to persistent memory. Store findings and context.",
         inputSchema={
             "type": "object",
             "properties": {
@@ -287,7 +287,7 @@ _TOOLS = [
         },
     ),
 
-    # ── LLM Direct (Advanced) ──
+    # ── LLM Direct ──
     Tool(
         name="llm_ask",
         description="Ask LLM directly with optional model selection.",
@@ -302,7 +302,7 @@ _TOOLS = [
         },
     ),
 
-    # ── System Status ──
+    # ── System ──
     Tool(
         name="agent_status",
         description="Get system status: available models, tools, workspace info.",
