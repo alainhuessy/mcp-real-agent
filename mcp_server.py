@@ -170,7 +170,7 @@ _TOOLS = [
     # ── File Tools ── (PRIMARY Workspace Access)
     Tool(
         name="file_read",
-        description="Read file contents from workspace. Access code, config, documentation files.",
+        description="Read file contents. Auto-truncates files >100KB. Shows file size for context.",
         inputSchema={
             "type": "object",
             "properties": {
@@ -195,7 +195,7 @@ _TOOLS = [
 
     Tool(
         name="file_list",
-        description="List directory contents in workspace. Explore project structure and find files.",
+        description="List directory with file/folder icons and sizes (📁/📄). Helps navigate workspace structure.",
         inputSchema={
             "type": "object",
             "properties": {
